@@ -55,7 +55,7 @@ Box boxCesped;
 Box boxWalls;
 Box boxHighway;
 Box boxLandingPad;
-Sphere esfera1(10, 10);
+Sphere esfera1(20, 20);
 // Models complex instances
 Model modelRock;
 Model modelAircraft;
@@ -429,7 +429,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	// Libera la memoria de la textura
 	textureHighway.freeImage();
 
-
+	
 	// Definiendo la Textura a utilizar
 	Texture textureLandingPad("../Textures/landingPad.jpg");
 	//cargando el mapa de BITS
@@ -457,11 +457,11 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 		textureLandingPad.getChannels() == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, textureLandingPad.getData());
 		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
 		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else 
-		std::cout << "Fallo la carga de textura" << std::endl;
-	textureLandingPad.freeImage(); // Liberamos memoria
-	
+	} else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	textureLandingPad.freeImage();
+
 }
 
 void destroy() {
@@ -851,15 +851,15 @@ void applicationLoop() {
 		boxHighway.render();
 
 		/*******************************************
-		 * Esfera 1
-		*********************************************/
+		 * Esfera1
+		 *******************************************/
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureHighwayID);
-		shaderMulLighting.setInt("texture1", 0);
-		esfera1.setScale(glm::vec3(3.0, 3.0, 3.0));
-		esfera1.setPosition(glm::vec3(3.0f, 2.0f, -10.0f));
+		shaderMulLighting.setInt("texture1",0);
+		esfera1.setPosition(glm::vec3(0.0f, 2.0f, -5.0));
+		esfera1.setScale(glm::vec3(2.5f,2.5f,2.5f));
 		esfera1.render();
-
 		
 
 		/*******************************************
@@ -886,6 +886,7 @@ void applicationLoop() {
 		boxLandingPad.render();
 		shaderMulLighting.setVectorFloat2("scaleUV",glm::value_ptr(glm::vec2(1.0,1.0)));
 		glBindTexture(GL_TEXTURE_2D, 0);
+
 
 
 		/*******************************************
