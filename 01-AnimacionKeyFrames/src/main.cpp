@@ -64,6 +64,7 @@ Model modelEclipseRearWheels;
 Model modelEclipseFrontalWheels;
 Model modelHeliChasis;
 Model modelHeliHeli;
+Model modelHeliRear;
 Model modelLambo;
 Model modelLamboLeftDor;
 Model modelLamboRightDor;
@@ -252,6 +253,8 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelHeliChasis.setShader(&shaderMulLighting);
 	modelHeliHeli.loadModel("../models/Helicopter/Mi_24_heli.obj");
 	modelHeliHeli.setShader(&shaderMulLighting);
+	modelHeliRear.loadModel("../models/Helicopter/Mi_24_heli_rear.obj");
+	modelHeliRear.setShader(&shaderMulLighting);
 	// Lamborginhi
 	modelLambo.loadModel("../models/Lamborginhi_Aventador_OBJ/Lamborghini_Aventador_chasis.obj");
 	modelLambo.setShader(&shaderMulLighting);
@@ -435,7 +438,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	glGenTextures(1, &textureLandingPadID); // Creando el id de la textura del landingpad
 	glBindTexture(GL_TEXTURE_2D, textureLandingPadID); // Se enlaza la textura
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // Wrapping en el eje u
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Wrapping en el eje v
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // Wrapping en el eje v
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filtering de minimización
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // Filtering de maximimizacion
 	if(textureLandingPad.getData()){
@@ -485,6 +488,7 @@ void destroy() {
 	modelEclipseRearWheels.destroy();
 	modelHeliChasis.destroy();
 	modelHeliHeli.destroy();
+	modelHeliRear.destroy();
 	modelLambo.destroy();
 	modelLamboFrontLeftWheel.destroy();
 	modelLamboFrontRightWheel.destroy();
@@ -666,16 +670,15 @@ void applicationLoop() {
 	modelMatrixEclipse = glm::translate(modelMatrixEclipse, glm::vec3(27.5, 0, 30.0));
 	modelMatrixEclipse = glm::rotate(modelMatrixEclipse, glm::radians(180.0f), glm::vec3(0, 1, 0));
 	int state = 0;
-	// Numero de avance
 	float advanceCount = 0.0;
 	float rotCount = 0.0;
 	float rotWheelsX = 0.0;
 	float rotWheelsY = 0.0;
-	// Recorrido 
 	int numberAdvance = 0;
 	int maxAdvance = 0.0;
-	const float avanceEclipse = 0.05; // Velocidad del Eclipse
-	const float rotEclipse = 0.5; // Velocidad de Rotacion del Eclipse
+	const float avanceEclipse = 0.1f;
+	// const float rotEclipse=0.05;
+	const float rotEclipse=0.30;
 
 	matrixModelRock = glm::translate(matrixModelRock, glm::vec3(-3.0, 0.0, 2.0));
 
@@ -868,9 +871,9 @@ void applicationLoop() {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureLandingPadID);
 		shaderMulLighting.setInt("texture1", 0);
-		shaderMulLighting.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 2.0)));
+		//shaderMulLighting.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(2.0, 2.0)));
 		boxLandingPad.render();
-		shaderMulLighting.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(1.0, 1.0)));
+		//shaderMulLighting.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(1.0, 1.0)));
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		/*******************************************
@@ -911,6 +914,17 @@ void applicationLoop() {
 		modelMatrixHeliHeli = glm::rotate(modelMatrixHeliHeli, rotHelHelY, glm::vec3(0, 1, 0));
 		modelMatrixHeliHeli = glm::translate(modelMatrixHeliHeli, glm::vec3(0.0, 0.0, 0.249548));
 		modelHeliHeli.render(modelMatrixHeliHeli);
+
+		glm::mat4 modelMatrixHeliRear = glm::mat4(modelMatrixHeliChasis);
+		modelMatrixHeliRear = glm::translate(modelMatrixHeliRear,
+			glm::vec3(0.298,2.1149,-5.66));
+		modelMatrixHeliRear = glm::rotate(modelMatrixHeliRear,
+			// glm::radians(rotHeliRear),glm::vec3(1,0,0)
+			// glm::radians(rotHelHelY),glm::vec3(1,0,0)
+			rotHelHelY,glm::vec3(1,0,0)
+		);
+		modelMatrixHeliRear = glm::translate(modelMatrixHeliRear,glm::vec3(-0.298,-2.1149,5.66));
+		modelHeliRear.render(modelMatrixHeliRear);
 
 		// Lambo car
 		glDisable(GL_CULL_FACE);
@@ -1000,64 +1014,86 @@ void applicationLoop() {
 
 		// Constantes de animaciones
 		rotHelHelY += 0.5;
+//
+/***********mAQUINAS DE ESTADO*****/
 
-		/*******************************************
-		 * Maquinas de estados para Movimiento Eclipse
-		 *******************************************/
-		switch (state) {
+	switch (state)
+	{
+	// case /* constant-expression */:
+	// 	/* code */
+	// 	break;
+	case 0:
+		if (numberAdvance==0)
+			maxAdvance=65.0f;
+		else if (numberAdvance==1)
+		maxAdvance=49.0f;
+		else if (numberAdvance==2)
+		maxAdvance=44.5f;
+		else if (numberAdvance==3)
+		maxAdvance=49.0f;
+		else if (numberAdvance==4)
+		maxAdvance=44.5f;
+		state=1;
+		
+		break;
+	case 1:
+		modelMatrixEclipse =glm::translate(modelMatrixEclipse, 
+			glm::vec3(0.0,0.0,avanceEclipse));
+		advanceCount+=avanceEclipse;
+		rotWheelsX+=0.055f;
+		rotWheelsY-=0.125f;
+		if (rotWheelsY <0){
+			rotWheelsY=0.0f;
+		}
+		if(advanceCount >maxAdvance){
+			advanceCount=0.0;
+			numberAdvance++;
+			state=2;
+			if(advanceCount >4)
+				advanceCount=1;
+		}
+		break;
+	case 2:
+		modelMatrixEclipse=glm::rotate(modelMatrixEclipse, 
+		glm::radians(rotEclipse),glm::vec3(0.0f,1.0f,0.0f));
+		rotCount += rotEclipse;
+		rotWheelsY+=0.125f;
+		rotWheelsX+=0.025f;
+		if(rotWheelsY>0.25f){
+			rotWheelsY=0.25f;
+		}
+		if(rotCount>90.0){
+			rotCount=0;
+			state=0;
+
+		}
+		break;
+	default:
+		break;
+	}
+//
+
+		//maquina de estados del lambo
+		switch (stateDoor)
+		{
 		case 0:
-			if (numberAdvance == 0) {
-				maxAdvance = 65.0f;
-			} else if (numberAdvance == 1) {
-				maxAdvance = 49.0f;
-			} else if (numberAdvance == 2) {
-				maxAdvance = 44.5f;
-			} else if (numberAdvance == 3) {
-				maxAdvance = 49.0f;
-			} else if (numberAdvance == 4) {
-				maxAdvance = 44.5f;
+			dorRotCount++;
+			if(dorRotCount > 75.0f){
+				stateDoor=1;
 			}
-			state = 1;
 			break;
 		case 1:
-				modelMatrixEclipse = glm::translate(modelMatrixEclipse,
-				glm::vec3(0.0f, 0.0f, avanceEclipse));
-			// Avanza el Eclipse
-			advanceCount += avanceEclipse;
-			// Gira la rueda en X and Y 
-			rotWheelsX += 0.025;
-			rotWheelsY -= 0.0025;
-			if (rotWheelsY < 0)
-				rotWheelsY = 0.0;
-			if (advanceCount > maxAdvance)
-			{
-				advanceCount = 0.0;
-				state = 2;
-				if (advanceCount > 4)
-					advanceCount = 1;				
+			dorRotCount--;
+			if(dorRotCount < 0.0f){
+				stateDoor=0;
 			}
 			break;
-		case 2:
-			modelMatrixEclipse = glm::translate(modelMatrixEclipse, glm::vec3(0.0f, 0.0f, 0.025f));
-			modelMatrixEclipse = glm::rotate(modelMatrixEclipse, 
-				glm::radians(rotEclipse), glm::vec3(0.0f, 1.0f, 0.0f));
-			// Gira el eclipse
-			rotCount += rotEclipse;
-			// Gira la rueda en Y
-			rotWheelsY += 0.0025;
-			if (rotWheelsY > 0.25)
-				rotWheelsY = 0.25;
-			if (rotCount > 90.0)	
-			{
-				rotCount = 0.0;
-				state = 0;
-			}
-			break;
+		
 		default:
 			break;
 		}
 
-
+//
 		glfwSwapBuffers(window);
 	}
 }
@@ -1068,3 +1104,4 @@ int main(int argc, char **argv) {
 	destroy();
 	return 1;
 }
+
