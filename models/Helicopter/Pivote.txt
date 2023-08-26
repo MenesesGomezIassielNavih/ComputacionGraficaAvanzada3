@@ -1,0 +1,14 @@
+Cómo sacar el pivote en Blender
+
+Blender:
+x = 1.52
+y = 6.523
+z = 1.288
+OpenGL:
+x = 1.52
+y = 1.288
+z = -6.523
+Pivote:
+x = -1.52
+y = -1.288
+z = 6.523
