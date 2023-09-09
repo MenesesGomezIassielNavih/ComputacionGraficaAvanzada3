@@ -23,8 +23,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{35304a30-97a0-4acd-a742-dec06ed1cdee}</ProjectGuid>
-    <RootNamespace>_01_AnimacionKeyFrames</RootNamespace>
+    <ProjectGuid>{A71035FD-4041-4D70-9413-F92C77668C1E}</ProjectGuid>
+    <RootNamespace>_02_AnimacionKeyFrames</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
