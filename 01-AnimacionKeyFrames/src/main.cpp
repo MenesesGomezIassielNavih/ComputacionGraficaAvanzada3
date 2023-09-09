@@ -160,6 +160,7 @@ bool enableCountSelected = true;
 bool saveFrame = false, availableSave = true;
 std::ofstream myfile;
 std::string fileName = "";
+std::string fileName2 = "";
 bool record = false;
 
 // Joints interpolations Dart Lego
@@ -906,6 +907,9 @@ void applicationLoop() {
 	fileName = "../animaciones/animation_dart_joints.txt";
 	keyFramesDartJoints = getKeyRotFrames(fileName);
 	keyFramesDart = getKeyFrames("../animaciones/animation_dart.txt");
+	fileName2 = "../animaciones/animation_buzz_joints.txt";
+	keyFramesBuzzJoints = getKeyRotFrames(fileName2);
+	keyFramesBuzz = getKeyFrames("../animaciones/animation_buzz.txt");
 
 	lastTime = TimeManager::Instance().GetTime();
 
