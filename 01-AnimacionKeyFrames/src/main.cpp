@@ -196,7 +196,7 @@ float rotHelHelY = 0.0;
 float rotHelRearY = 0.0;
 
 // Var animate lambo dor
-int stateDoor = 0;
+int stateDoor = 3;
 float dorRotCount = 0.0;
 
 double deltaTime;
@@ -871,22 +871,22 @@ void applicationLoop() {
 	modelMatrixEclipse = glm::translate(modelMatrixEclipse, glm::vec3(27.5, 0, 30.0));
 	modelMatrixEclipse = glm::rotate(modelMatrixEclipse, glm::radians(180.0f), glm::vec3(0, 1, 0));
 	int state = 0;
-	int state2 = 0;
+	int state2 = 0;		// LAMBO
 	int state3 = 0;
 	float helicopterHeightCounter=0.5f;
 	float helicopterRotationCounter = 0.0f;
 	float advanceCount = 0.0;
-	float advanceCount2 = 0.0;
+	float advanceCount2 = 0.0;		// LAMBO 
 	float rotCount = 0.0;
-	float rotCount2 = 0.0;
+	float rotCount2 = 0.0;			// LAMBO
 	float rotWheelsX = 0.0;
-	float rotWheelsX2 = 0.0;
+	float rotWheelsX2 = 0.0;		// LAMBO
 	float rotWheelsY = 0.0;
-	float rotWheelsY2 = 0.0;
+	float rotWheelsY2 = 0.0;		// LAMBO
 	int numberAdvance = 0;
-	int numberAdvance2 = 0; 
+	int numberAdvance2 = 0;			// LAMBO 
 	int maxAdvance = 0.0;
-	int maxAdvance2 = 0.0;
+	int maxAdvance2 = 0.0;			// LAMBO
 	int maxAdvance3 = 0.0;
 
 	matrixModelRock = glm::translate(matrixModelRock, glm::vec3(-3.0, 0.0, 2.0));
@@ -1492,7 +1492,7 @@ void applicationLoop() {
 		}
 
 
-		//Maquina de estado de Auto Lambo
+		//Maquina de estado del Auto Lambo
 		switch(state2){  
 			case 0:
 				if(numberAdvance2 == 0)
@@ -1505,6 +1505,9 @@ void applicationLoop() {
 					maxAdvance2 = 40.0f;
 				else if(numberAdvance2 == 4)
 					maxAdvance2 = 36.0f;
+				else if(numberAdvance2 == 5)
+					break;
+				printf("state circuit -: %d \n", numberAdvance2);
 				state2 = 1;
 				break;
 
@@ -1520,7 +1523,7 @@ void applicationLoop() {
 					numberAdvance2++;
 					state2 = 2;					
 				}
-			 	break;
+				break;
 			case 2:
 				modelMatrixLambo = glm::translate(modelMatrixLambo, glm::vec3(0.0f,0.0f,0.025f)); //para gira de llantas en eje Y
 				modelMatrixLambo = glm::rotate(modelMatrixLambo, glm::radians(-0.5f),glm::vec3(0.0f,1.0f,0.0f)); //+
@@ -1532,30 +1535,41 @@ void applicationLoop() {
 				if(rotCount2 <= -90.0f){
 					rotCount2 = 0;
 					state2 = 0;
-					if(numberAdvance2 > 4)
-						numberAdvance2 = 1;
+					if(numberAdvance2 > 4){
+						numberAdvance2 = 5;
+						stateDoor  = 0;
+					}
 				}	
 				break;
 		}
 
 		//Maquina de estados (Lambo) de la puerta
-	
 		switch(stateDoor){
 			case 0:
+				if (numberAdvance2 == 5 && stateDoor == 0){
+					printf("stateDoor: %d | numberAdvance: %d \n", stateDoor, numberAdvance2);
+					stateDoor = 1;
+				} else {
+					break;
+				}
+			
+			case 1:
 				dorRotCount += 0.5;
 				if(dorRotCount > 75.0f)
-					stateDoor = 1;
+					stateDoor = 2;
 				break;
-			case 1:
+			case 2:
 				dorRotCount  -= 0.5;
-				if(dorRotCount <0) {
+				if(dorRotCount < 0) {
 					dorRotCount = 0.0f;
-					stateDoor = 0;
+					stateDoor = 3;
 				}
+			case 3:
+				break;
 		}
 	
 		
-
+		//Maquina de estados Helicoptero de la puerta
 		switch(state3){
 			case 0: //acelera
 				helicopterRotationCounter += 0.001f;
@@ -1576,7 +1590,6 @@ void applicationLoop() {
 				}
 				break;
 			case 2: //descenso
-				
 				maxAdvance3 = 60.0f;
 				helicopterHeightCounter += 0.1;
 				modelMatrixHeli = glm::translate(modelMatrixHeli, glm::vec3(0.0, -0.01, 0.0));
@@ -1591,13 +1604,9 @@ void applicationLoop() {
 					helicopterRotationCounter = 0.0f;
 					state3 = 0;
 				}
-					
 				break;
 			default:
 				break;
-			
-
-			
 		}
 
 		glfwSwapBuffers(window);
