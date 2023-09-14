@@ -198,6 +198,7 @@ float rotHelRearY = 0.0;
 // Var animate lambo dor
 int stateDoor = 3;
 float dorRotCount = 0.0;
+float dorRotCountRight = 0.0;
 
 double deltaTime;
 double currTime, lastTime;
@@ -1148,7 +1149,7 @@ void applicationLoop() {
 
 		glm::mat4 modelMatrixLamboRightDor = glm::mat4(modelMatrixLamboChasis);
 		modelMatrixLamboRightDor = glm::translate(modelMatrixLamboRightDor, glm::vec3(-1.076, 0.6992, 0.9766));
-		modelMatrixLamboRightDor = glm::rotate(modelMatrixLamboRightDor, glm::radians(dorRotCount), glm::vec3(1.0, 0, 0));
+		modelMatrixLamboRightDor = glm::rotate(modelMatrixLamboRightDor, glm::radians(dorRotCountRight), glm::vec3(1.0, 0, 0));
 		modelMatrixLamboRightDor = glm::translate(modelMatrixLamboRightDor, glm::vec3(1.076, -0.6992, -0.9766));
 		modelLamboRightDor.render(modelMatrixLamboRightDor);
 
@@ -1504,7 +1505,7 @@ void applicationLoop() {
 				else if(numberAdvance2 == 3)
 					maxAdvance2 = 40.0f;
 				else if(numberAdvance2 == 4)
-					maxAdvance2 = 36.0f;
+					maxAdvance2 = 31.0f;
 				else if(numberAdvance2 == 5)
 					break;
 				printf("state circuit -: %d \n", numberAdvance2);
@@ -1523,8 +1524,13 @@ void applicationLoop() {
 					numberAdvance2++;
 					state2 = 2;					
 				}
+				
 				break;
 			case 2:
+				if(numberAdvance2 == 5){
+						stateDoor  = 0;
+						break;
+					}
 				modelMatrixLambo = glm::translate(modelMatrixLambo, glm::vec3(0.0f,0.0f,0.025f)); //para gira de llantas en eje Y
 				modelMatrixLambo = glm::rotate(modelMatrixLambo, glm::radians(-0.5f),glm::vec3(0.0f,1.0f,0.0f)); //+
 				rotCount2 -= 0.5f; //+
@@ -1535,10 +1541,6 @@ void applicationLoop() {
 				if(rotCount2 <= -90.0f){
 					rotCount2 = 0;
 					state2 = 0;
-					if(numberAdvance2 > 4){
-						numberAdvance2 = 5;
-						stateDoor  = 0;
-					}
 				}	
 				break;
 		}
@@ -1554,15 +1556,16 @@ void applicationLoop() {
 				}
 			
 			case 1:
-				dorRotCount += 0.5;
-				if(dorRotCount > 75.0f)
-					stateDoor = 2;
+				dorRotCountRight += 0.5f;
+				if(dorRotCountRight >= 75.0f)
+					dorRotCountRight = 75.0f;//stateDoor = 2;
 				break;
 			case 2:
-				dorRotCount  -= 0.5;
+				dorRotCount  -= 0.5f;
 				if(dorRotCount < 0) {
 					dorRotCount = 0.0f;
 					stateDoor = 3;
+				break;
 				}
 			case 3:
 				break;
