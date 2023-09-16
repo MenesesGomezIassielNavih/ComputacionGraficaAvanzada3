@@ -107,6 +107,11 @@ Model modelBuzzRightThigh;
 Model modelBuzzRightCalf;
 Model modelBuzzRightFoot;
 
+//
+//Model MC1 
+Model modelMC1;
+//Model MC2
+Model modelMC2;
 
 
 
@@ -140,6 +145,9 @@ glm::mat4 modelMatrixHeli = glm::mat4(1.0f);
 glm::mat4 modelMatrixLambo = glm::mat4(1.0);
 glm::mat4 modelMatrixAircraft = glm::mat4(1.0);
 glm::mat4 modelMatrixDart = glm::mat4(1.0f);
+//
+glm::mat4 modelMatrixMC1 = glm::mat4(1.0f);
+glm::mat4 modelMatrixMC2 = glm::mat4(1.0f);
 
 glm::mat4 modelMatrixBuzz = glm::mat4(1.0f); //matriz con diagonal principal, suyos elementos son 1.0f
 
@@ -386,7 +394,16 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelBuzzRightFoot.loadModel("../models/Buzz/buzzlightyRightFoot.obj");
 	modelBuzzRightFoot.setShader(&shaderMulLighting);
 
-
+	//practica
+	//char1
+	// modelMC1.loadModel("../models/onichan_verde/GIRL_DANCER.fbx");DANCER_GIRL_1
+	// modelMC1.loadModel("../models/onichan_verde/DANCER_GIRL_1.obj");
+	modelMC1.loadModel("../models/DANCER_GIRL_1/DANCER_GIRL_1.obj");
+	modelMC1.setShader(&shaderMulLighting);
+	//char2
+	// modelMC2.loadModel("../models/chica_rosa/baby_young.fbx");
+	modelMC2.loadModel("../models/chica_rosa_1/model.obj");
+	modelMC2.setShader(&shaderMulLighting);
 	
 
 
@@ -632,7 +649,10 @@ void destroy() {
 	modelBuzzRightCalf.destroy();
 	modelBuzzRightFoot.destroy();
 
-
+	
+	//practica destroy
+	modelMC1.destroy();
+	modelMC2.destroy();
 	
 
 	// Textures Delete
@@ -902,8 +922,13 @@ void applicationLoop() {
 
 	modelMatrixBuzz = glm::translate(modelMatrixBuzz, glm::vec3(3.0f, 1.0f, -15.0));
 
-	
-
+	//practica
+	modelMatrixMC1 = glm::translate(modelMatrixMC1,glm::vec3(-5.0f, 0.05f, -11.0f));
+	modelMatrixMC1 = glm::rotate(modelMatrixMC1,glm::radians(0.0f),glm::vec3(1,0,0));
+	modelMatrixMC1 = glm::scale(modelMatrixMC1, glm::vec3(0.012f,0.012f,0.012f));
+	modelMatrixMC2 = glm::translate(modelMatrixMC2,glm::vec3(-5.0f, 5.05f, -10.0f));
+	modelMatrixMC2 = glm::rotate(modelMatrixMC2,glm::radians(0.0f),glm::vec3(1,0,0));
+	modelMatrixMC2 = glm::scale(modelMatrixMC2, glm::vec3(0.012f,0.012f,0.012f));
 	// Variables to interpolation key frames
 	fileName = "../animaciones/animation_dart_joints.txt";
 	keyFramesDartJoints = getKeyRotFrames(fileName);
@@ -1297,8 +1322,12 @@ void applicationLoop() {
 		 * Custom Anim objects obj
 		*****************************/
 
-	
+		//practica
+		modelMC1.setAnimationIndex(0);
+		modelMC2.setAnimationIndex(0);
 		
+		modelMC1.render(modelMatrixMC1);
+		modelMC2.render(modelMatrixMC2);
 
 		/*******************************************
 		 * Skybox
