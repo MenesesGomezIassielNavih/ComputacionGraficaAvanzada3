@@ -918,9 +918,9 @@ void applicationLoop() {
 
 	modelMatrixLambo = glm::translate(modelMatrixLambo, glm::vec3(23.0, 0.0, 0.0));
 
-	modelMatrixDart = glm::translate(modelMatrixDart, glm::vec3(3.0, 0.0, 20.0));
+	modelMatrixDart = glm::translate(modelMatrixDart, glm::vec3(3.0, 0.0, -14.0));
 
-	modelMatrixBuzz = glm::translate(modelMatrixBuzz, glm::vec3(3.0f, 1.0f, -15.0));
+	modelMatrixBuzz = glm::translate(modelMatrixBuzz, glm::vec3(3.0f, 0.0f, -16.0));
 
 	//practica
 	modelMatrixMC1 = glm::translate(modelMatrixMC1,glm::vec3(-5.0f, 0.05f, -11.0f));
@@ -1252,7 +1252,7 @@ void applicationLoop() {
 		glDisable(GL_CULL_FACE);
 		//Buzz
 		glm::mat4 modelMatrixBuzzBody = glm::mat4(modelMatrixBuzz);
-		modelMatrixBuzzBody = glm::scale(modelMatrixBuzzBody, glm::vec3(2.5f));
+		modelMatrixBuzzBody = glm::scale(modelMatrixBuzzBody, glm::vec3(3.0f));
 		modelBuzzTorso.render(modelMatrixBuzzBody);
 		glm::mat4 modelMatrixBuzzLeftArm = glm::mat4(modelMatrixBuzzBody);
 		modelMatrixBuzzLeftArm = glm::translate(modelMatrixBuzzLeftArm,glm::vec3(0.1837,0.5798, -0.02744));
@@ -1558,6 +1558,8 @@ void applicationLoop() {
 			case 2:
 				if(numberAdvance2 == 5){
 						stateDoor  = 0;
+						if(dorRotCountRight >= 75.0f)
+							state2=3;
 						break;
 					}
 				modelMatrixLambo = glm::translate(modelMatrixLambo, glm::vec3(0.0f,0.0f,0.025f)); //para gira de llantas en eje Y
@@ -1572,13 +1574,14 @@ void applicationLoop() {
 					state2 = 0;
 				}	
 				break;
+			case 3:
+				break;
 		}
 
 		//Maquina de estados (Lambo) de la puerta
 		switch(stateDoor){
 			case 0:
 				if (numberAdvance2 == 5 && stateDoor == 0){
-					printf("stateDoor: %d | numberAdvance: %d \n", stateDoor, numberAdvance2);
 					stateDoor = 1;
 				} else {
 					break;
@@ -1588,6 +1591,7 @@ void applicationLoop() {
 				dorRotCountRight += 0.5f;
 				if(dorRotCountRight >= 75.0f)
 					dorRotCountRight = 75.0f;//stateDoor = 2;
+					stateDoor = 3;
 				break;
 			case 2:
 				dorRotCount  -= 0.5f;
