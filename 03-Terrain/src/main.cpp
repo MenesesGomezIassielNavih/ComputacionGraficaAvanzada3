@@ -103,7 +103,7 @@ Model guardianModelAnimate;
 Model cyborgModelAnimate;
 //Terreno
 //Terrain terrain(-1.0f,-1.0f,200.0f,64.0f,"../Textures/heightmap.png");
-Terrain terrain(-1.0f,-1.0f,200.0f,64.0f,"../Textures/Terrain2024-1.png");
+Terrain terrain(-1.0f,-1.0f,200.0f,8.0f,"../Textures/Terrain2024-1.png");
 // Terrain terrain(-1.0f,-1.0f,100.0f,8.0f,"../Textures/heightmap.png");
 
 GLuint textureCespedID, textureWallID, textureWindowID, textureHighwayID, textureLandingPadID;
