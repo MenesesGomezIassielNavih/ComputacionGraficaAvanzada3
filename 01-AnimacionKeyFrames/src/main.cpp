@@ -107,6 +107,11 @@ Model modelBuzzRightThigh;
 Model modelBuzzRightCalf;
 Model modelBuzzRightFoot;
 
+//
+//Model MC1 
+Model modelMC1;
+//Model MC2
+Model modelMC2;
 
 
 
@@ -140,6 +145,9 @@ glm::mat4 modelMatrixHeli = glm::mat4(1.0f);
 glm::mat4 modelMatrixLambo = glm::mat4(1.0);
 glm::mat4 modelMatrixAircraft = glm::mat4(1.0);
 glm::mat4 modelMatrixDart = glm::mat4(1.0f);
+//
+glm::mat4 modelMatrixMC1 = glm::mat4(1.0f);
+glm::mat4 modelMatrixMC2 = glm::mat4(1.0f);
 
 glm::mat4 modelMatrixBuzz = glm::mat4(1.0f); //matriz con diagonal principal, suyos elementos son 1.0f
 
@@ -196,8 +204,9 @@ float rotHelHelY = 0.0;
 float rotHelRearY = 0.0;
 
 // Var animate lambo dor
-int stateDoor = 0;
+int stateDoor = 3;
 float dorRotCount = 0.0;
+float dorRotCountRight = 0.0;
 
 double deltaTime;
 double currTime, lastTime;
@@ -265,7 +274,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
-	// Inicialización de los shaders
+	// InicializaciÃ³n de los shaders
 	shader.initialize("../Shaders/colorShader.vs", "../Shaders/colorShader.fs");
 	shaderSkybox.initialize("../Shaders/skyBox.vs", "../Shaders/skyBox.fs");
 	//shaderMulLighting.initialize("../Shaders/iluminacion_texture_res.vs", "../Shaders/multipleLights.fs");
@@ -385,7 +394,16 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelBuzzRightFoot.loadModel("../models/Buzz/buzzlightyRightFoot.obj");
 	modelBuzzRightFoot.setShader(&shaderMulLighting);
 
-
+	//practica
+	//char1
+	// modelMC1.loadModel("../models/onichan_verde/GIRL_DANCER.fbx");DANCER_GIRL_1
+	// modelMC1.loadModel("../models/onichan_verde/DANCER_GIRL_1.obj");
+	modelMC1.loadModel("../models/DANCER_GIRL_1/DANCER_GIRL_1.obj");
+	modelMC1.setShader(&shaderMulLighting);
+	//char2
+	// modelMC2.loadModel("../models/chica_rosa/baby_young.fbx");
+	modelMC2.loadModel("../models/chica_rosa_1/model.obj");
+	modelMC2.setShader(&shaderMulLighting);
 	
 
 
@@ -631,7 +649,10 @@ void destroy() {
 	modelBuzzRightCalf.destroy();
 	modelBuzzRightFoot.destroy();
 
-
+	
+	//practica destroy
+	modelMC1.destroy();
+	modelMC2.destroy();
 	
 
 	// Textures Delete
@@ -871,22 +892,22 @@ void applicationLoop() {
 	modelMatrixEclipse = glm::translate(modelMatrixEclipse, glm::vec3(27.5, 0, 30.0));
 	modelMatrixEclipse = glm::rotate(modelMatrixEclipse, glm::radians(180.0f), glm::vec3(0, 1, 0));
 	int state = 0;
-	int state2 = 0;
+	int state2 = 0;		// LAMBO
 	int state3 = 0;
 	float helicopterHeightCounter=0.5f;
 	float helicopterRotationCounter = 0.0f;
 	float advanceCount = 0.0;
-	float advanceCount2 = 0.0;
+	float advanceCount2 = 0.0;		// LAMBO 
 	float rotCount = 0.0;
-	float rotCount2 = 0.0;
+	float rotCount2 = 0.0;			// LAMBO
 	float rotWheelsX = 0.0;
-	float rotWheelsX2 = 0.0;
+	float rotWheelsX2 = 0.0;		// LAMBO
 	float rotWheelsY = 0.0;
-	float rotWheelsY2 = 0.0;
+	float rotWheelsY2 = 0.0;		// LAMBO
 	int numberAdvance = 0;
-	int numberAdvance2 = 0; 
+	int numberAdvance2 = 0;			// LAMBO 
 	int maxAdvance = 0.0;
-	int maxAdvance2 = 0.0;
+	int maxAdvance2 = 0.0;			// LAMBO
 	int maxAdvance3 = 0.0;
 
 	matrixModelRock = glm::translate(matrixModelRock, glm::vec3(-3.0, 0.0, 2.0));
@@ -897,12 +918,17 @@ void applicationLoop() {
 
 	modelMatrixLambo = glm::translate(modelMatrixLambo, glm::vec3(23.0, 0.0, 0.0));
 
-	modelMatrixDart = glm::translate(modelMatrixDart, glm::vec3(3.0, 0.0, 20.0));
+	modelMatrixDart = glm::translate(modelMatrixDart, glm::vec3(3.0, 0.0, -14.0));
 
-	modelMatrixBuzz = glm::translate(modelMatrixBuzz, glm::vec3(3.0f, 1.0f, -15.0));
+	modelMatrixBuzz = glm::translate(modelMatrixBuzz, glm::vec3(3.0f, 0.0f, -16.0));
 
-	
-
+	//practica
+	modelMatrixMC1 = glm::translate(modelMatrixMC1,glm::vec3(-5.0f, 0.05f, -11.0f));
+	modelMatrixMC1 = glm::rotate(modelMatrixMC1,glm::radians(0.0f),glm::vec3(1,0,0));
+	modelMatrixMC1 = glm::scale(modelMatrixMC1, glm::vec3(0.012f,0.012f,0.012f));
+	modelMatrixMC2 = glm::translate(modelMatrixMC2,glm::vec3(-5.0f, 5.05f, -10.0f));
+	modelMatrixMC2 = glm::rotate(modelMatrixMC2,glm::radians(0.0f),glm::vec3(1,0,0));
+	modelMatrixMC2 = glm::scale(modelMatrixMC2, glm::vec3(0.012f,0.012f,0.012f));
 	// Variables to interpolation key frames
 	fileName = "../animaciones/animation_dart_joints.txt";
 	keyFramesDartJoints = getKeyRotFrames(fileName);
@@ -1148,7 +1174,7 @@ void applicationLoop() {
 
 		glm::mat4 modelMatrixLamboRightDor = glm::mat4(modelMatrixLamboChasis);
 		modelMatrixLamboRightDor = glm::translate(modelMatrixLamboRightDor, glm::vec3(-1.076, 0.6992, 0.9766));
-		modelMatrixLamboRightDor = glm::rotate(modelMatrixLamboRightDor, glm::radians(dorRotCount), glm::vec3(1.0, 0, 0));
+		modelMatrixLamboRightDor = glm::rotate(modelMatrixLamboRightDor, glm::radians(dorRotCountRight), glm::vec3(1.0, 0, 0));
 		modelMatrixLamboRightDor = glm::translate(modelMatrixLamboRightDor, glm::vec3(1.076, -0.6992, -0.9766));
 		modelLamboRightDor.render(modelMatrixLamboRightDor);
 
@@ -1226,7 +1252,7 @@ void applicationLoop() {
 		glDisable(GL_CULL_FACE);
 		//Buzz
 		glm::mat4 modelMatrixBuzzBody = glm::mat4(modelMatrixBuzz);
-		modelMatrixBuzzBody = glm::scale(modelMatrixBuzzBody, glm::vec3(2.5f));
+		modelMatrixBuzzBody = glm::scale(modelMatrixBuzzBody, glm::vec3(3.0f));
 		modelBuzzTorso.render(modelMatrixBuzzBody);
 		glm::mat4 modelMatrixBuzzLeftArm = glm::mat4(modelMatrixBuzzBody);
 		modelMatrixBuzzLeftArm = glm::translate(modelMatrixBuzzLeftArm,glm::vec3(0.1837,0.5798, -0.02744));
@@ -1296,8 +1322,12 @@ void applicationLoop() {
 		 * Custom Anim objects obj
 		*****************************/
 
-	
+		//practica
+		modelMC1.setAnimationIndex(0);
+		modelMC2.setAnimationIndex(0);
 		
+		modelMC1.render(modelMatrixMC1);
+		modelMC2.render(modelMatrixMC2);
 
 		/*******************************************
 		 * Skybox
@@ -1492,7 +1522,7 @@ void applicationLoop() {
 		}
 
 
-		//Maquina de estado de Auto Lambo
+		//Maquina de estado del Auto Lambo
 		switch(state2){  
 			case 0:
 				if(numberAdvance2 == 0)
@@ -1504,7 +1534,10 @@ void applicationLoop() {
 				else if(numberAdvance2 == 3)
 					maxAdvance2 = 40.0f;
 				else if(numberAdvance2 == 4)
-					maxAdvance2 = 36.0f;
+					maxAdvance2 = 31.0f;
+				else if(numberAdvance2 == 5)
+					break;
+				printf("state circuit -: %d \n", numberAdvance2);
 				state2 = 1;
 				break;
 
@@ -1520,8 +1553,15 @@ void applicationLoop() {
 					numberAdvance2++;
 					state2 = 2;					
 				}
-			 	break;
+				
+				break;
 			case 2:
+				if(numberAdvance2 == 5){
+						stateDoor  = 0;
+						if(dorRotCountRight >= 75.0f)
+							state2=3;
+						break;
+					}
 				modelMatrixLambo = glm::translate(modelMatrixLambo, glm::vec3(0.0f,0.0f,0.025f)); //para gira de llantas en eje Y
 				modelMatrixLambo = glm::rotate(modelMatrixLambo, glm::radians(-0.5f),glm::vec3(0.0f,1.0f,0.0f)); //+
 				rotCount2 -= 0.5f; //+
@@ -1532,30 +1572,40 @@ void applicationLoop() {
 				if(rotCount2 <= -90.0f){
 					rotCount2 = 0;
 					state2 = 0;
-					if(numberAdvance2 > 4)
-						numberAdvance2 = 1;
 				}	
+				break;
+			case 3:
 				break;
 		}
 
 		//Maquina de estados (Lambo) de la puerta
-	
 		switch(stateDoor){
 			case 0:
-				dorRotCount += 0.5;
-				if(dorRotCount > 75.0f)
+				if (numberAdvance2 == 5 && stateDoor == 0){
 					stateDoor = 1;
-				break;
-			case 1:
-				dorRotCount  -= 0.5;
-				if(dorRotCount <0) {
-					dorRotCount = 0.0f;
-					stateDoor = 0;
+				} else {
+					break;
 				}
+			
+			case 1:
+				dorRotCountRight += 0.5f;
+				if(dorRotCountRight >= 75.0f)
+					dorRotCountRight = 75.0f;//stateDoor = 2;
+					stateDoor = 3;
+				break;
+			case 2:
+				dorRotCount  -= 0.5f;
+				if(dorRotCount < 0) {
+					dorRotCount = 0.0f;
+					stateDoor = 3;
+				break;
+				}
+			case 3:
+				break;
 		}
 	
 		
-
+		//Maquina de estados Helicoptero de la puerta
 		switch(state3){
 			case 0: //acelera
 				helicopterRotationCounter += 0.001f;
@@ -1576,7 +1626,6 @@ void applicationLoop() {
 				}
 				break;
 			case 2: //descenso
-				
 				maxAdvance3 = 60.0f;
 				helicopterHeightCounter += 0.1;
 				modelMatrixHeli = glm::translate(modelMatrixHeli, glm::vec3(0.0, -0.01, 0.0));
@@ -1591,13 +1640,9 @@ void applicationLoop() {
 					helicopterRotationCounter = 0.0f;
 					state3 = 0;
 				}
-					
 				break;
 			default:
 				break;
-			
-
-			
 		}
 
 		glfwSwapBuffers(window);
