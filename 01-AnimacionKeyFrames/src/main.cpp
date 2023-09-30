@@ -127,12 +127,12 @@ GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
 GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
 GL_TEXTURE_CUBE_MAP_NEGATIVE_Z };
 
-std::string fileNames[6] = { "../Textures/mp_bloodvalley/blood-valley_ft.tga",
-		"../Textures/mp_bloodvalley/blood-valley_bk.tga",
-		"../Textures/mp_bloodvalley/blood-valley_up.tga",
-		"../Textures/mp_bloodvalley/blood-valley_dn.tga",
-		"../Textures/mp_bloodvalley/blood-valley_rt.tga",
-		"../Textures/mp_bloodvalley/blood-valley_lf.tga" };
+std::string fileNames[6] = { "../Textures/ulukai/corona_ft.tga",
+		"../Textures/ulukai/corona_bk.tga",
+		"../Textures/ulukai/corona_up.tga",
+		"../Textures/ulukai/corona_dn.tga",
+		"../Textures/ulukai/corona_rt.tga",
+		"../Textures/ulukai/corona_lf.tga" };
 
 bool exitApp = false;
 int lastMousePosX, offsetX = 0;
