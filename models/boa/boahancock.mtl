@@ -1,0 +1,131 @@
+# 3ds Max Wavefront OBJ Exporter v0.99 - (c)2007 guruware
+# File Created: 06.06.2023 19:36:25
+
+newmtl Clothes
+	Ns 0.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.8000 0.8000 0.8000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka T_Chr0100_cloth_C.jpg
+	map_Kd T_Chr0100_cloth_C.jpg
+	map_bump -bm 0.3000 T_Chr0100_cloth_N_tga_Normal_Bump.jpg
+
+newmtl Accessory
+	Ns 0.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.8000 0.8000 0.8000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka T_Chr0100_accessory_C.jpg
+	map_Kd T_Chr0100_accessory_C.jpg
+	map_bump -bm 0.3000 T_Chr0100_accessory_N_tga_Normal_Bump.jpg
+
+newmtl Face
+	Ns 0.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.8000 0.8000 0.8000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka T_Chr0100_face_C.jpg
+	map_Kd T_Chr0100_face_C.jpg
+	map_bump -bm 0.3000 T_Chr0100_face_N_tga_Normal_Bump.jpg
+
+newmtl Hair
+	Ns 0.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.8000 0.8000 0.8000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka T_Chr0100_hair_C.jpg
+	map_Kd T_Chr0100_hair_C.jpg
+	map_bump -bm 0.3000 T_Chr0100_hair_N_tga_Normal_Bump.jpg
+
+newmtl Eyes_Angry
+	Ns 88.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.8000 0.8000 0.8000
+	Ks 0.7300 0.7300 0.7300
+	Ke 0.0000 0.0000 0.0000
+	map_Ka T_Chr0100_eye_anger_C.jpg
+	map_Kd T_Chr0100_eye_anger_C.jpg
+
+newmtl Eyes
+	Ns 86.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.8000 0.8000 0.8000
+	Ks 0.7500 0.7500 0.7500
+	Ke 0.0000 0.0000 0.0000
+	map_Ka T_Chr0100_eye_C.jpg
+	map_Kd T_Chr0100_eye_C.jpg
+
+newmtl Body
+	Ns 0.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.8000 0.8000 0.8000
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka T_Chr0100_body_C.jpg
+	map_Kd T_Chr0100_body_C.jpg
+	map_bump -bm 0.3000 T_Chr0100_body_N_tga_Normal_Bump.jpg
+
+newmtl Eyeshadow
+	Ns 0.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.4286 0.4286 0.4286
+	Ks 0.0000 0.0000 0.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ka T_Chr0100_eyeshadow_C.jpg
+	map_Kd T_Chr0100_eyeshadow_C.jpg
+
+newmtl Lenz
+	Ns 87.0000
+	Ni 1.5000
+	d 0.0500
+	Tr 0.9500
+	Tf 0.0500 0.0500 0.0500 
+	illum 2
+	Ka 0.0000 0.0000 0.0000
+	Kd 0.8000 0.8000 0.8000
+	Ks 0.7700 0.7700 0.7700
+	Ke 0.0000 0.0000 0.0000

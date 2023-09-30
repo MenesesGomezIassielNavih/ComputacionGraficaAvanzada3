@@ -41,7 +41,7 @@
 
 int screenWidth;
 int screenHeight;
-
+int mueve = 1;
 GLFWwindow *window;
 
 Shader shader;
@@ -115,6 +115,22 @@ Model cowboyAnimate;
 //Cyborg
 Model cyborgAnimate;
 
+//mujer caminando
+Model modelBobAnimate;
+
+//Boa Hancock caminando
+Model modelBoaAnimate;
+
+
+
+//Model MC1 
+Model modelMC1Animate;
+//Model MC2
+Model modelMC2Animate;
+
+
+
+
 
 
 GLuint textureCespedID, textureWallID, textureWindowID, textureHighwayID, textureLandingPadID;
@@ -155,12 +171,16 @@ glm::mat4 modelMatrixHeli = glm::mat4(1.0f);
 glm::mat4 modelMatrixLambo = glm::mat4(1.0);
 glm::mat4 modelMatrixAircraft = glm::mat4(1.0);
 glm::mat4 modelMatrixDart = glm::mat4(1.0f);
+glm::mat4 modelMatrixBuzz = glm::mat4(1.0f);
 
 glm::mat4 modelMatrixMayow = glm::mat4(1.0f);
 glm::mat4 modelMatrixCowboy = glm::mat4(1.0f);
 glm::mat4 modelMatrixCyborg = glm::mat4(1.0f);
+glm::mat4 modelMatrixBoa = glm::mat4(1.0f); 
 
-glm::mat4 modelMatrixBuzz = glm::mat4(1.0f); //matriz con diagonal principal, suyos elementos son 1.0f
+glm::mat4 modelMatrixMC1 = glm::mat4(1.0f);
+glm::mat4 modelMatrixMC2 = glm::mat4(1.0f);
+
 
 int animationIndex = 1;
 float 	rotDartHead = 0.0f, rotDartLeftArm = 0.0f, rotDartLeftHand = 0.0f, 
@@ -404,10 +424,13 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelBuzzRightFoot.setShader(&shaderMulLighting);
 
 
-//Mayow
+	//Mayow
 	mayowModelAnimate.loadModel("../models/mayow/personaje2.fbx");
 	mayowModelAnimate.setShader(&shaderMulLighting);
 
+	// Model Bob
+	modelBobAnimate.loadModel("../models/boblampclean/boblampclean.md5anim");
+	modelBobAnimate.setShader(&shaderMulLighting);
 	
 	//Cowboy
 	cowboyAnimate.loadModel("../models/cowboy/Character Running.fbx");
@@ -415,12 +438,24 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 
 	//Cyborg
 	
-	cyborgAnimate.loadModel("../models/cyborg2/cyborg_caminando_4.fbx");
-	//cyborgAnimate.loadModel("../models/michell/michelle_movi_03.fbx");
-	//cyborgAnimate.loadModel("../models/cyborg/cyborgAnimationPrueba2.fbx");
+	cyborgAnimate.loadModel("../models/cyborg2/cyborg_cam_repos.fbx");
 	cyborgAnimate.setShader(&shaderMulLighting);
 	
+	
+	//Boa Hancock
+	modelBoaAnimate.loadModel("../models/boa/boa_combinado.fbx");
+	modelBoaAnimate.setShader(&shaderMulLighting);
 
+	modelMC1Animate.loadModel("../models/DANCER_GIRL_1/DANCER_GIRL_1.obj");
+	modelMC1Animate.setShader(&shaderMulLighting);
+	
+
+
+	//mujer que hace sentadillas
+	modelMC2Animate.loadModel("../models/boa/michelle_09.fbx");
+	modelMC2Animate.setShader(&shaderMulLighting);
+
+	
 
 	camera->setPosition(glm::vec3(0.0, 3.0, 4.0));
 	
@@ -668,7 +703,10 @@ void destroy() {
 	mayowModelAnimate.destroy();
 	cowboyAnimate.destroy();
 	cyborgAnimate.destroy();
-	
+	modelBobAnimate.destroy();
+	modelBoaAnimate.destroy();
+	modelMC1Animate.destroy();
+	modelMC2Animate.destroy();
 
 	// Textures Delete
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -742,6 +780,25 @@ bool processInput(bool continueApplication) {
 	offsetX = 0;
 	offsetY = 0;
 
+//movi de cyborg
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
+		
+		mueve = 0;
+		modelMatrixCyborg = glm::rotate(modelMatrixCyborg, glm::radians(1.0f), glm::vec3(0, 1, 0));
+		
+	}else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
+		mueve = 0;
+		modelMatrixCyborg = glm::rotate(modelMatrixCyborg, glm::radians(-1.0f), glm::vec3(0, 1, 0));
+		
+	}if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
+		mueve = 0;
+		modelMatrixCyborg = glm::translate(modelMatrixCyborg, glm::vec3(0, 0, 0.02));
+		
+	}else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
+		mueve = 0;
+		modelMatrixCyborg = glm::translate(modelMatrixCyborg, glm::vec3(0, 0, -0.02));
+		
+	}
 	// Seleccionar modelo
 	if (enableCountSelected && glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS){
 		enableCountSelected = false;
@@ -958,16 +1015,27 @@ void applicationLoop() {
 	modelMatrixMayow = glm::translate(modelMatrixMayow, glm::vec3(13.0f, 0.05f, -5.0f));
 	modelMatrixMayow = glm::rotate(modelMatrixMayow, glm::radians(-90.0f), glm::vec3(0, 1, 0));
 
-	modelMatrixCowboy = glm::translate(modelMatrixCowboy, glm::vec3(5.0f, 0.05f, -10.0f));
+	modelMatrixCowboy = glm::translate(modelMatrixCowboy, glm::vec3(5.0f, 0.05f, -15.0f));
 
 	modelMatrixCyborg = glm::translate(modelMatrixCyborg, glm::vec3(-5.0f, 0.05f, -15.0f));
 
-	
+	modelMatrixBoa = glm::translate(modelMatrixBoa, glm::vec3(4.0f, 0.05f,-20.0f));
+
+	//practica
+	modelMatrixMC1 = glm::translate(modelMatrixMC1,glm::vec3(-5.0f, 0.05f, -11.0f));
+	modelMatrixMC1 = glm::rotate(modelMatrixMC1,glm::radians(0.0f),glm::vec3(1,0,0));
+	modelMatrixMC1 = glm::scale(modelMatrixMC1, glm::vec3(0.012f,0.012f,0.012f));
+	modelMatrixMC2 = glm::translate(modelMatrixMC2,glm::vec3(-5.0f, 5.05f, -10.0f));
+	modelMatrixMC2 = glm::rotate(modelMatrixMC2,glm::radians(0.0f),glm::vec3(1,0,0));
+	modelMatrixMC2 = glm::scale(modelMatrixMC2, glm::vec3(0.012f,0.012f,0.012f));
+
 
 	// Variables to interpolation key frames
 	fileName = "../animaciones/animation_dart_joints.txt";
 	keyFramesDartJoints = getKeyRotFrames(fileName);
 	keyFramesDart = getKeyFrames("../animaciones/animation_dart.txt");
+	keyFramesBuzzJoints = getKeyRotFrames("../animaciones/animation_buzz_joints.txt");
+	keyFramesBuzz = getKeyFrames("../animaciones/animation_buzz.txt");
 
 	lastTime = TimeManager::Instance().GetTime();
 
@@ -1157,8 +1225,9 @@ void applicationLoop() {
 		// Render for the aircraft model
 		modelAircraft.render(modelMatrixAircraft);
 
+		
 		// Render for the eclipse car
-		glm::mat4 modelMatrixEclipseChasis = glm::mat4(modelMatrixEclipse);
+		/*glm::mat4 modelMatrixEclipseChasis = glm::mat4(modelMatrixEclipse);
 		modelMatrixEclipseChasis = glm::scale(modelMatrixEclipse, glm::vec3(0.5, 0.5, 0.5));
 		modelEclipseChasis.render(modelMatrixEclipseChasis);
 
@@ -1174,6 +1243,8 @@ void applicationLoop() {
 		modelMatrixRearWheels = glm::rotate(modelMatrixRearWheels, rotWheelsX, glm::vec3(1, 0, 0));
 		modelMatrixRearWheels = glm::translate(modelMatrixRearWheels, glm::vec3(0.0, -1.05813, 4.35157));
 		modelEclipseRearWheels.render(modelMatrixRearWheels);
+
+*/
 
 		// Helicopter
 		glm::mat4 modelMatrixHeliChasis = glm::mat4(modelMatrixHeli);
@@ -1383,8 +1454,23 @@ void applicationLoop() {
 
 		glm::mat4 modelMatrixCyborgBody = glm::mat4(modelMatrixCyborg);
 		modelMatrixCyborgBody = glm::scale(modelMatrixCyborgBody, glm::vec3(0.01, 0.01, 0.01));
+		cyborgAnimate.setAnimationIndex(mueve);
 		cyborgAnimate.render(modelMatrixCyborgBody);
-	
+		
+		glm::mat4 modelMatrixBoaBody = glm::mat4(modelMatrixBoa);
+		modelMatrixBoaBody = glm::scale(modelMatrixBoaBody, glm::vec3(0.02, 0.02, 0.02));
+		
+
+		modelBoaAnimate.setAnimationIndex(0); //mueve
+		modelBoaAnimate.render(modelMatrixBoaBody);
+		mueve = 1;
+
+		//practica
+		modelMC1Animate.setAnimationIndex(0);
+		modelMC2Animate.setAnimationIndex(0);
+		
+		modelMC1Animate.render(modelMatrixMC1);
+		modelMC2Animate.render(modelMatrixMC2);
 		
 
 		/*******************************************
@@ -1554,7 +1640,7 @@ void applicationLoop() {
 				break;
 
 			case 1:
-				modelMatrixEclipse = glm::translate(modelMatrixEclipse,glm::vec3(0.0f, 0.0f,0.1f));
+				modelMatrixBoa = glm::translate(modelMatrixBoa,glm::vec3(0.0f, 0.0f,0.1f));
 				advanceCount += 0.1f;
 				rotWheelsX += 0.05f;
 				rotWheelsY -= 0.02f;
@@ -1567,8 +1653,8 @@ void applicationLoop() {
 				}
 			 	break;
 			case 2:
-				modelMatrixEclipse = glm::translate(modelMatrixEclipse, glm::vec3(0.0f,0.0f,0.025f)); //para gira de llantas en eje Y
-				modelMatrixEclipse = glm::rotate(modelMatrixEclipse, glm::radians(0.5f),glm::vec3(0.0f,1.0f,0.0f));
+				modelMatrixBoa = glm::translate(modelMatrixBoa, glm::vec3(0.0f,0.0f,0.025f)); //para gira de llantas en eje Y
+				modelMatrixBoa = glm::rotate(modelMatrixBoa, glm::radians(0.5f),glm::vec3(0.0f,1.0f,0.0f));
 				rotCount += 0.5f;
 				rotWheelsX += 0.05f;
 				rotWheelsY += 0.02f;
