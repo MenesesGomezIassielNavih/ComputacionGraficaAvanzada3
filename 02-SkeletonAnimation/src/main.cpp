@@ -455,7 +455,6 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelMC2Animate.loadModel("../models/boa/michelle_09.fbx");
 	modelMC2Animate.setShader(&shaderMulLighting);
 
-	
 
 	camera->setPosition(glm::vec3(0.0, 3.0, 4.0));
 	
@@ -1034,8 +1033,6 @@ void applicationLoop() {
 	fileName = "../animaciones/animation_dart_joints.txt";
 	keyFramesDartJoints = getKeyRotFrames(fileName);
 	keyFramesDart = getKeyFrames("../animaciones/animation_dart.txt");
-	keyFramesBuzzJoints = getKeyRotFrames("../animaciones/animation_buzz_joints.txt");
-	keyFramesBuzz = getKeyFrames("../animaciones/animation_buzz.txt");
 
 	lastTime = TimeManager::Instance().GetTime();
 
