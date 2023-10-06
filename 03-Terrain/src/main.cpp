@@ -192,7 +192,7 @@ float rotHelHelY = 0.0;
 float rotHelHelBack = 0.0;
 
 // Var animate lambo dor
-int stateDoor = 0;
+int stateDoor = 3;
 float dorRotCount = 0.0;
 
 double deltaTime;
@@ -1035,6 +1035,17 @@ void applicationLoop() {
 		glDisable(GL_CULL_FACE);
 		glm::mat4 modelMatrixLamboChasis = glm::mat4(modelMatrixLambo);
 		modelMatrixLamboChasis = glm::scale(modelMatrixLamboChasis, glm::vec3(1.3, 1.3, 1.3));
+		modelMatrixLamboChasis[3][1]=
+		terrain.getHeightTerrain(modelMatrixLamboChasis[3][0],modelMatrixLamboChasis[3][2]);//hacer la interpolacion en base a la posicion x y z del modelo
+		//cambio con angulo de inclinacion
+		glm::vec3 ejeyLamboChasis=glm::normalize(
+			terrain.getNormalTerrain(modelMatrixLamboChasis[3][0],modelMatrixLamboChasis[3][2]));
+		glm::vec3 ejezLamboChasis=glm::normalize(modelMatrixLamboChasis[2]);
+		glm::vec3 ejexLamboChasis=glm::normalize(glm::cross(ejeyLamboChasis,ejezLamboChasis));
+		 ejezLamboChasis=glm::normalize(glm::cross(ejexLamboChasis,ejeyLamboChasis));
+		modelMatrixLamboChasis[0]=glm::vec4(ejexLamboChasis,0.0f);
+		modelMatrixLamboChasis[1]=glm::vec4(ejeyLamboChasis,0.0f);
+		modelMatrixLamboChasis[2]=glm::vec4(ejezLamboChasis,0.0f);
 		modelLambo.render(modelMatrixLamboChasis);
 		
 		glActiveTexture(GL_TEXTURE0);
@@ -1052,6 +1063,18 @@ void applicationLoop() {
 
 
 		glm::mat4 modelMatrixLamboFrontLeftWheel = glm::mat4(modelMatrixLamboChasis);
+		modelMatrixLamboFrontLeftWheel[3][1]=
+		terrain.getHeightTerrain(modelMatrixLamboFrontLeftWheel[3][0],modelMatrixLamboFrontLeftWheel[3][2]);//hacer la interpolacion en base a la posicion x y z del modelo
+		//cambio con angulo de inclinacion
+		glm::vec3 ejeyLamboFrontLeftWheel=glm::normalize(
+			terrain.getNormalTerrain(modelMatrixLamboFrontLeftWheel[3][0],modelMatrixLamboFrontLeftWheel[3][2]));
+		glm::vec3 ejezLamboFrontLeftWheel=glm::normalize(modelMatrixLamboFrontLeftWheel[2]);
+		glm::vec3 ejexLamboFrontLeftWheel=glm::normalize(glm::cross(ejeyLamboFrontLeftWheel,ejezLamboFrontLeftWheel));
+		 ejezLamboFrontLeftWheel=glm::normalize(glm::cross(ejexLamboFrontLeftWheel,ejeyLamboFrontLeftWheel));
+		modelMatrixLamboFrontLeftWheel[0]=glm::vec4(ejexLamboFrontLeftWheel,0.0f);
+		modelMatrixLamboFrontLeftWheel[1]=glm::vec4(ejeyLamboFrontLeftWheel,0.0f);
+		modelMatrixLamboFrontLeftWheel[2]=glm::vec4(ejezLamboFrontLeftWheel,0.0f);
+
 		modelMatrixLamboFrontLeftWheel = glm::translate(modelMatrixLamboFrontLeftWheel, glm::vec3(0.0f,0.37f,1.4f));
 		modelMatrixLamboFrontLeftWheel = glm::rotate(modelMatrixLamboFrontLeftWheel, -rotWheelsY2, glm::vec3(0, 1, 0)); //giro en Y contrario al del Eclipse
 		modelMatrixLamboFrontLeftWheel = glm::rotate(modelMatrixLamboFrontLeftWheel, rotWheelsX2, glm::vec3(1, 0, 0));
@@ -1060,6 +1083,19 @@ void applicationLoop() {
 		modelLamboFrontRightWheel.render(modelMatrixLamboFrontLeftWheel);
 		
 		glm::mat4 modelMatrixLamboRearLeftWheel = glm::mat4(modelMatrixLamboChasis);
+		modelMatrixLamboRearLeftWheel[3][1]=
+		terrain.getHeightTerrain(modelMatrixLamboRearLeftWheel[3][0],modelMatrixLamboRearLeftWheel[3][2]);//hacer la interpolacion en base a la posicion x y z del modelo
+		//cambio con angulo de inclinacion
+		glm::vec3 ejeyLamboRearLeftWheel=glm::normalize(
+			terrain.getNormalTerrain(modelMatrixLamboRearLeftWheel[3][0],modelMatrixLamboRearLeftWheel[3][2]));
+		glm::vec3 ejezLamboRearLeftWheel=glm::normalize(modelMatrixLamboRearLeftWheel[2]);
+		glm::vec3 ejexLamboRearLeftWheel=glm::normalize(glm::cross(ejeyLamboRearLeftWheel,ejezLamboRearLeftWheel));
+		 ejezLamboRearLeftWheel=glm::normalize(glm::cross(ejexLamboRearLeftWheel,ejeyLamboRearLeftWheel));
+		modelMatrixLamboRearLeftWheel[0]=glm::vec4(ejexLamboRearLeftWheel,0.0f);
+		modelMatrixLamboRearLeftWheel[1]=glm::vec4(ejeyLamboRearLeftWheel,0.0f);
+		modelMatrixLamboRearLeftWheel[2]=glm::vec4(ejezLamboRearLeftWheel,0.0f);
+
+
 		modelMatrixLamboRearLeftWheel = glm::translate(modelMatrixLamboRearLeftWheel, glm::vec3(0.0f,0.397f,-1.598f));
 		modelMatrixLamboRearLeftWheel = glm::rotate(modelMatrixLamboRearLeftWheel, rotWheelsX2, glm::vec3(1, 0, 0));
 		modelMatrixLamboRearLeftWheel = glm::translate(modelMatrixLamboRearLeftWheel, glm::vec3(0.0, -0.397f, 1.598f));
@@ -1189,8 +1225,6 @@ void applicationLoop() {
 		cyborgAnimate.setAnimationIndex(mueve);
 		cyborgAnimate.render(modelMatrixCyborgBody2);
 		mueve = 1;
-
-
 
 		glm::mat4 modelMatrixCowboyBody = glm::mat4(modelMatrixCowboy);
 		modelMatrixCowboyBody = glm::scale(modelMatrixCowboyBody, glm::vec3(0.0021f));
@@ -1376,23 +1410,67 @@ void applicationLoop() {
 			break;
 		}
 
-		// Maquina de estado de lambo
-		switch (stateDoor)
-		{
-		case 0:
-			dorRotCount += 0.5;
-			if(dorRotCount > 75)
-				stateDoor = 1;
-			break;
-		case 1:
-			dorRotCount -= 0.5;
-			if(dorRotCount < 0){
-				dorRotCount = 0.0;
-				stateDoor = 0;
-			}
 		
-		default:
-			break;
+		//Maquina de estado de Auto Lambo
+		switch(state2){  
+			case 0:
+				if(numberAdvance2 == 0)
+					maxAdvance2 = 5.0f;
+				else if(numberAdvance2 == 1)
+					maxAdvance2 = 40.0f;
+				else if(numberAdvance2 == 2)
+					maxAdvance2 = 36.0f;
+				else if(numberAdvance2 == 3)
+					maxAdvance2 = 40.0f;
+				else if(numberAdvance2 == 4)
+					maxAdvance2 = 36.0f;
+				state2 = 1;
+				break;
+
+			case 1:
+				modelMatrixLambo = glm::translate(modelMatrixLambo,glm::vec3(0.0f, 0.0f,0.1f));
+				advanceCount2 += 0.1f;
+				rotWheelsX2 += 0.05f;
+				rotWheelsY2 -= 0.02f;
+				if(rotWheelsY2 < 0.0f)
+					rotWheelsY2 = 0.0f;
+				if(advanceCount2> maxAdvance2){
+					advanceCount2 = 0;
+					numberAdvance2++;
+					state2 = 2;					
+				}
+			 	break;
+			case 2:
+				modelMatrixLambo = glm::translate(modelMatrixLambo, glm::vec3(0.0f,0.0f,0.025f)); //para gira de llantas en eje Y
+				modelMatrixLambo = glm::rotate(modelMatrixLambo, glm::radians(-0.5f),glm::vec3(0.0f,1.0f,0.0f)); //+
+				rotCount2 -= 0.5f; //+
+				rotWheelsX2 += 0.05f;
+				rotWheelsY2 += 0.02f; //+
+				if(rotWheelsY2 > 0.24f)    //*****
+					rotWheelsY2 = 0.24f;
+				if(rotCount2 <= -90.0f){
+					rotCount2 = 0;
+					state2 = 0;
+					if(numberAdvance2 > 4)
+						numberAdvance2 = 1;
+				}	
+				break;
+		}
+
+		//Maquina de estados (Lambo) de la puerta
+	
+		switch(stateDoor){
+			case 0:
+				dorRotCount += 0.5;
+				if(dorRotCount > 75.0f)
+					stateDoor = 1;
+				break;
+			case 1:
+				dorRotCount  -= 0.5;
+				if(dorRotCount <0) {
+					dorRotCount = 0.0f;
+					stateDoor = 0;
+				}
 		}
 
 		// Constantes de animaciones
