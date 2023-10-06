@@ -50,6 +50,9 @@ Shader shaderSkybox;
 //Shader con multiples luces
 Shader shaderMulLighting;
 
+//Shader con multiples luces y texturas
+Shader shaderMulLightingMT;
+
 std::shared_ptr<FirstPersonCamera> camera(new FirstPersonCamera());
 
 
@@ -280,6 +283,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	//shaderMulLighting.initialize("../Shaders/iluminacion_texture_res.vs", "../Shaders/multipleLights.fs");
 	//para poder renderizar los objetos
 	shaderMulLighting.initialize("../Shaders/iluminacion_textura_animation.vs", "../Shaders/multipleLights.fs");
+	shaderMulLightingMT.initialize("../Shaders/iluminacion_textura_animation.vs", "../Shaders/multipleLights_ejercicio_mt.fs");
 	
 	// Inicializacion de los objetos.
 	skyboxSphere.init();
@@ -287,7 +291,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	skyboxSphere.setScale(glm::vec3(20.0f, 20.0f, 20.0f));
 
 	esfera1.init();  //**clase01
-	esfera1.setShader(&shaderMulLighting); //**clase01
+	esfera1.setShader(&shaderMulLightingMT); //**clase01
 	esfera1.setPosition(glm::vec3(0.0f,2.0f,-5.0f));
 
 	boxCesped.init();
@@ -597,6 +601,7 @@ void destroy() {
 	shader.destroy();
 	shaderMulLighting.destroy();
 	shaderSkybox.destroy();
+	shaderMulLightingMT.destroy();
 
 	// Basic objects Delete
 	skyboxSphere.destroy();
@@ -977,6 +982,13 @@ void applicationLoop() {
 		shaderMulLighting.setMatrix4("view", 1, false,
 				glm::value_ptr(view));
 
+		// Settea la matriz de vista y projection al shader con multiples luces y texturas
+		shaderMulLightingMT.setMatrix4("projection", 1, false,
+					glm::value_ptr(projection));
+		shaderMulLightingMT.setMatrix4("view", 1, false,
+				glm::value_ptr(view));
+
+
 		/*******************************************
 		 * Propiedades Luz direccional
 		 *******************************************/
@@ -986,15 +998,29 @@ void applicationLoop() {
 		shaderMulLighting.setVectorFloat3("directionalLight.light.specular", glm::value_ptr(glm::vec3(0.9, 0.9, 0.9)));
 		shaderMulLighting.setVectorFloat3("directionalLight.direction", glm::value_ptr(glm::vec3(-1.0, 0.0, 0.0)));
 
+
+
+		shaderMulLightingMT.setVectorFloat3("viewPos", glm::value_ptr(camera->getPosition()));
+		shaderMulLightingMT.setVectorFloat3("directionalLight.light.ambient", glm::value_ptr(glm::vec3(0.3, 0.3, 0.3)));
+		shaderMulLightingMT.setVectorFloat3("directionalLight.light.diffuse", glm::value_ptr(glm::vec3(0.7, 0.7, 0.7)));
+		shaderMulLightingMT.setVectorFloat3("directionalLight.light.specular", glm::value_ptr(glm::vec3(0.9, 0.9, 0.9)));
+		shaderMulLightingMT.setVectorFloat3("directionalLight.direction", glm::value_ptr(glm::vec3(-1.0, 0.0, 0.0)));
+
+
 		/*******************************************
 		 * Propiedades SpotLights
 		 *******************************************/
 		shaderMulLighting.setInt("spotLightCount", 0);
 
+		shaderMulLightingMT.setInt("spotLightCount", 0);
+
 		/*******************************************
 		 * Propiedades PointLights
 		 *******************************************/
 		shaderMulLighting.setInt("pointLightCount", 0);
+
+		shaderMulLightingMT.setInt("pointLightCount", 0);
+
 
 		/*******************************************
 		 * Cesped
@@ -1100,17 +1126,31 @@ void applicationLoop() {
 		*  renderizado de las esferas
 		ademas de aplicar una Textura
 		***********************************/
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, textureWindowID);
-		//esfera1.setScale(glm::vec3(2.5f,2.5f,2.5f));
-		//.setPosition(glm::vec3(0.0f, 2.0f, -5.0));
-		//esfera1.render();
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureWallID);
+		shaderMulLightingMT.setInt("texture1",0);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, textureWindowID);
+		shaderMulLightingMT.setInt("texture2",3);
 
-		//(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, textureHighwayID);
-		//esfera1.setScale(glm::vec3(3.5f,3.5f,3.5f));
-		//esfera1.setPosition(glm::vec3(12.0f, 2.0f, -5.0));
-		//esfera1.render();
+		esfera1.setScale(glm::vec3(2.5f,2.5f,2.5f));
+		esfera1.setPosition(glm::vec3(0.0f, 2.0f, -5.0));
+		esfera1.render();
+
+
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureLandingPadID);
+		shaderMulLightingMT.setInt("texture2",0);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, textureWindowID);
+		shaderMulLightingMT.setInt("texture1",3);
+
+
+		esfera1.setScale(glm::vec3(3.5f,3.5f,3.5f));
+		esfera1.setPosition(glm::vec3(12.0f, 2.0f, -5.0));
+		esfera1.render();
+
 
 
 
