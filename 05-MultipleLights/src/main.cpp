@@ -94,6 +94,13 @@ Model modelBuzzHead;
 Model modelBuzzLeftArm;
 Model modelBuzzLeftForeArm;
 Model modelBuzzLeftHand;
+
+//Modelos de lamparas
+
+Model modelLamp1;
+Model modelLamp2;
+Model modelLamp2Post;
+
 // Modelos animados
 // Mayow
 Model mayowModelAnimate;
@@ -189,6 +196,25 @@ float rotHelHelBack = 0.0;
 // Var animate lambo dor
 int stateDoor = 0;
 float dorRotCount = 0.0;
+
+// lamps position
+std::vector<glm::vec3> lamp1Position =  {
+	glm :: vec3 ( -7.03 , 0 , -19.14 ) ,
+	glm :: vec3 ( 24.41 , 0 , -34.57 ) ,
+	glm :: vec3 ( -10.15 , 0 , -54.10 )
+};
+
+std :: vector <float> lamp10rientation = {
+    -17.0 , -82.67 , 23.7
+} ;
+
+
+std::vector<glm::vec3> lamp2Position =  {
+};
+
+std :: vector <float> lamp20rientation = {
+} ;
+                                     
 
 double deltaTime;
 double currTime, lastTime;
@@ -354,6 +380,15 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelBuzzLeftForeArm.setShader(&shaderMulLighting);
 	modelBuzzLeftHand.loadModel("../models/buzz/buzzlightyLeftHand.obj");
 	modelBuzzLeftHand.setShader(&shaderMulLighting);
+
+
+	//Lamparas
+	modelLamp1.loadModel("../models/Street-Lamp-Black/objLamp.obj");
+	modelLamp1.setShader(&shaderMulLighting);
+	modelLamp2.loadModel("../models/StreetLight/Lamp.obj");
+	modelLamp2.setShader(&shaderMulLighting);
+	modelLamp2Post.loadModel("../models/StreetLight/LampPost.obj");
+	modelLamp2Post.setShader(&shaderMulLighting);
 
 	// Mayow
 	mayowModelAnimate.loadModel("../models/mayow/personaje2.fbx");
@@ -668,6 +703,11 @@ void destroy() {
 	cowboyModelAnimate.destroy();
 	guardianModelAnimate.destroy();
 	cyborgModelAnimate.destroy();
+
+	//Lamparas
+	modelLamp1.destroy();
+	modelLamp2.destroy();
+	modelLamp2Post.destroy();
 
 	// Terrains objects Delete
 	terrain.destroy();
@@ -1023,16 +1063,16 @@ void applicationLoop() {
 		shaderTerrain.setInt("backgroundTexture", 0);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, textureTerrainRID);
-		shaderTerrain.setInt("rTexture", 1);
+		shaderTerrain.setInt("textureR", 1);
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, textureTerrainGID);
-		shaderTerrain.setInt("gTexture", 2);
+		shaderTerrain.setInt("textureG", 2);
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, textureTerrainBID);
-		shaderTerrain.setInt("bTexture", 3);
+		shaderTerrain.setInt("textureB", 3);
 		glActiveTexture(GL_TEXTURE4);
 		glBindTexture(GL_TEXTURE_2D, textureTerrainBlendMapID);
-		shaderTerrain.setInt("blendMapTexture", 4);
+		shaderTerrain.setInt("textureBlendMap", 4);
 		shaderTerrain.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(80, 80)));
 		terrain.setPosition(glm::vec3(100, 0, 100));
 		terrain.render();
@@ -1105,6 +1145,29 @@ void applicationLoop() {
 		modelLamboRearRightWheel.render(modelMatrixLamboChasis);
 		// Se regresa el cull faces IMPORTANTE para las puertas
 		glEnable(GL_CULL_FACE);
+
+		//Render lamp1
+		for(int i=0; i<lamp1Position.size(); i++){
+			lamp1Position[i].y = terrain.getHeightTerrain(lamp1Position[i].x,lamp1Position[i].z);
+			modelLamp1.setPosition(lamp1Position[i]);
+			modelLamp1.setScale(glm::vec3(0.5));
+			modelLamp1.setOrientation(glm::vec3(0, lamp10rientation[i], 0));
+			modelLamp1.render();
+		}
+		//Render lamp2
+		for(int i=0; i<lamp2Position.size(); i++){
+			lamp2Position[i].y = terrain.getHeightTerrain(lamp2Position[i].x,lamp2Position[i].z);
+			modelLamp2.setPosition(lamp2Position[i]);
+			modelLamp2.setScale(glm::vec3(0.5));
+			modelLamp2.setOrientation(glm::vec3(0, lamp20rientation[i], 0));
+			modelLamp2.render();
+			modelLamp2Post.setPosition(lamp2Position[i]);
+			modelLamp2Post.setScale(glm::vec3(0.5));
+			modelLamp2Post.setOrientation(glm::vec3(0, lamp20rientation[i], 0));
+			modelLamp2Post.render();
+		}
+
+
 
 		// Dart lego
 		// Se deshabilita el cull faces IMPORTANTE para la capa
