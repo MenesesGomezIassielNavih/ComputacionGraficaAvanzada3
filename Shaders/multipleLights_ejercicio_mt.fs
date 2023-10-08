@@ -59,7 +59,7 @@ uniform sampler2D texture2;
 vec3 calculateDirectionalLight(Light light, vec3 direction){
 	vec4 textura1 = texture(texture1, our_uv);
 	vec4 textura2 = texture(texture2, our_uv);
-	vec4 textureFinal = mix(textura1, textura2, 0.2);
+	vec4 textureFinal = mix(textura1, textura2, 0.3);
 
 	// Ambient
     vec3 ambient  = light.ambient * vec3(textureFinal);
