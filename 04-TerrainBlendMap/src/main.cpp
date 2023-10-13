@@ -104,8 +104,13 @@ Model cowboyModelAnimate;
 Model guardianModelAnimate;
 // Cybog
 Model cyborgModelAnimate;
+
+//Cyborg que se hizo en la practica 2
+Model cyborgAnimate;
+
 // Terrain model instance
-Terrain terrain(-1, -1, 200, 8, "../Textures/heightmap.png");
+//Terrain terrain(-1, -1, 200, 8, "../Textures/heightmap.png");
+Terrain terrain(-1.0f,-1.0f,200.0f,8.0f,"../Textures/Terrain2024-1.png");
 
 GLuint textureCespedID, textureWallID, textureWindowID, textureHighwayID, textureLandingPadID;
 GLuint skyboxTextureID;
@@ -142,8 +147,10 @@ glm::mat4 modelMatrixMayow = glm::mat4(1.0f);
 glm::mat4 modelMatrixCowboy = glm::mat4(1.0f);
 glm::mat4 modelMatrixGuardian = glm::mat4(1.0f);
 glm::mat4 modelMatrixCyborg = glm::mat4(1.0f);
+glm::mat4 modelMatrixCyborg2 = glm::mat4(1.0f);
 
 int animationMayowIndex = 1;
+int mueve = 1;
 float rotDartHead = 0.0, rotDartLeftArm = 0.0, rotDartLeftHand = 0.0, rotDartRightArm = 0.0, rotDartRightHand = 0.0, rotDartLeftLeg = 0.0, rotDartRightLeg = 0.0;
 float rotBuzzHead = 0.0, rotBuzzLeftarm = 0.0, rotBuzzLeftForeArm = 0.0, rotBuzzLeftHand = 0.0;
 int modelSelected = 0;
@@ -371,6 +378,10 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	// Cyborg
 	cyborgModelAnimate.loadModel("../models/cyborg/cyborg.fbx");
 	cyborgModelAnimate.setShader(&shaderMulLighting);
+
+	//Cybororg p2
+	cyborgAnimate.loadModel("../models/cyborg2/cyborg_cam_repos.fbx");
+	cyborgAnimate.setShader(&shaderMulLighting);
 
 	// Terreno
 	terrain.init();
@@ -673,6 +684,8 @@ void destroy() {
 	cowboyModelAnimate.destroy();
 	guardianModelAnimate.destroy();
 	cyborgModelAnimate.destroy();
+	//p2
+	cyborgAnimate.destroy();
 
 	// Terrains objects Delete
 	terrain.destroy();
@@ -901,6 +914,27 @@ bool processInput(bool continueApplication) {
 		modelMatrixMayow = glm::translate(modelMatrixMayow, glm::vec3(0.0, 0.0, -0.02));
 		animationMayowIndex = 0;
 	}
+	
+	//movi de cyborg
+	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS){
+		
+		mueve = 0;
+		modelMatrixCyborg2 = glm::rotate(modelMatrixCyborg2, glm::radians(1.0f), glm::vec3(0, 1, 0));
+		
+	}else if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS){
+		mueve = 0;
+		modelMatrixCyborg2 = glm::rotate(modelMatrixCyborg2, glm::radians(-1.0f), glm::vec3(0, 1, 0));
+		
+	}if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS){
+		mueve = 0;
+		modelMatrixCyborg2 = glm::translate(modelMatrixCyborg2, glm::vec3(0, 0, 0.02));
+		
+	}else if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS){
+		mueve = 0;
+		modelMatrixCyborg2 = glm::translate(modelMatrixCyborg2, glm::vec3(0, 0, -0.02));
+		
+	}
+
 
 	glfwPollEvents();
 	return continueApplication;
@@ -940,6 +974,8 @@ void applicationLoop() {
 	modelMatrixGuardian = glm::rotate(modelMatrixGuardian, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
 
 	modelMatrixCyborg = glm::translate(modelMatrixCyborg, glm::vec3(5.0f, 0.05, 0.0f));
+
+	modelMatrixCyborg2 = glm::translate(modelMatrixCyborg, glm::vec3(-5.0f, 0.05f, -15.0f));
 
 	// Variables to interpolation key frames
 	fileName = "../animaciones/animation_dart_joints.txt";
@@ -1212,6 +1248,27 @@ void applicationLoop() {
 		mayowModelAnimate.setAnimationIndex(animationMayowIndex);
 		mayowModelAnimate.render(modelMatrixMayowBody);
 		animationMayowIndex = 1;
+
+		//cyborg p2
+		modelMatrixCyborg2[3][1]=
+		terrain.getHeightTerrain(modelMatrixCyborg2[3][0],modelMatrixCyborg2[3][2]);//hacer la interpolacion en base a la posicion x y z del modelo
+		//cambio con angulo de inclinacion
+		glm::vec3 ejey2=glm::normalize(
+			terrain.getNormalTerrain(modelMatrixCyborg2[3][0],modelMatrixCyborg2[3][2]));
+		glm::vec3 ejez2=glm::normalize(modelMatrixCyborg2[2]);
+		glm::vec3 ejex2=glm::normalize(glm::cross(ejey2,ejez2));
+		 ejez=glm::normalize(glm::cross(ejex,ejey));
+		modelMatrixCyborg2[0]=glm::vec4(ejex2,0.0f);
+		modelMatrixCyborg2[1]=glm::vec4(ejey2,0.0f);
+		modelMatrixCyborg2[2]=glm::vec4(ejez2,0.0f);
+
+		glm::mat4 modelMatrixCyborgBody2 = glm::mat4(modelMatrixCyborg2);
+		modelMatrixCyborgBody2 = glm::scale(modelMatrixCyborgBody2, glm::vec3(0.01, 0.01, 0.01));
+		cyborgAnimate.setAnimationIndex(mueve);
+		cyborgAnimate.render(modelMatrixCyborgBody2);
+		mueve = 1;
+
+
 
 		modelMatrixCowboy[3][1] = terrain.getHeightTerrain(modelMatrixCowboy[3][0], modelMatrixCowboy[3][2]);
 		glm::mat4 modelMatrixCowboyBody = glm::mat4(modelMatrixCowboy);
