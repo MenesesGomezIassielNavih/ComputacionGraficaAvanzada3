@@ -50,8 +50,7 @@ Shader shader;
 Shader shaderSkybox;
 //Shader con multiples luces
 Shader shaderMulLighting;
-
-//Shader del terreno
+//Shader para el terreno
 Shader shaderTerrain;
 
 std::shared_ptr<FirstPersonCamera> camera(new FirstPersonCamera());
@@ -95,6 +94,13 @@ Model modelBuzzHead;
 Model modelBuzzLeftArm;
 Model modelBuzzLeftForeArm;
 Model modelBuzzLeftHand;
+
+//Modelos de lamparas
+
+Model modelLamp1;
+Model modelLamp2;
+Model modelLamp2Post;
+
 // Modelos animados
 // Mayow
 Model mayowModelAnimate;
@@ -108,8 +114,8 @@ Model cyborgModelAnimate;
 Terrain terrain(-1, -1, 200, 8, "../Textures/heightmap.png");
 
 GLuint textureCespedID, textureWallID, textureWindowID, textureHighwayID, textureLandingPadID;
+GLuint textureTerrainRID, textureTerrainGID, textureTerrainBID, textureTerrainBlendMapID;
 GLuint skyboxTextureID;
-GLuint textureRID, textureGID, textureBID, textureBlendMapID;
 
 GLenum types[6] = {
 GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -190,6 +196,25 @@ float rotHelHelBack = 0.0;
 // Var animate lambo dor
 int stateDoor = 0;
 float dorRotCount = 0.0;
+
+// lamps position
+std::vector<glm::vec3> lamp1Position =  {
+	glm :: vec3 ( -7.03 , 0 , -19.14 ) ,
+	glm :: vec3 ( 24.41 , 0 , -34.57 ) ,
+	glm :: vec3 ( -10.15 , 0 , -54.10 )
+};
+
+std :: vector <float> lamp10rientation = {
+    -17.0 , -82.67 , 23.7
+} ;
+
+
+std::vector<glm::vec3> lamp2Position =  {
+};
+
+std :: vector <float> lamp20rientation = {
+} ;
+                                     
 
 double deltaTime;
 double currTime, lastTime;
@@ -355,6 +380,15 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelBuzzLeftForeArm.setShader(&shaderMulLighting);
 	modelBuzzLeftHand.loadModel("../models/buzz/buzzlightyLeftHand.obj");
 	modelBuzzLeftHand.setShader(&shaderMulLighting);
+
+
+	//Lamparas
+	modelLamp1.loadModel("../models/Street-Lamp-Black/objLamp.obj");
+	modelLamp1.setShader(&shaderMulLighting);
+	modelLamp2.loadModel("../models/StreetLight/Lamp.obj");
+	modelLamp2.setShader(&shaderMulLighting);
+	modelLamp2Post.loadModel("../models/StreetLight/LampPost.obj");
+	modelLamp2Post.setShader(&shaderMulLighting);
 
 	// Mayow
 	mayowModelAnimate.loadModel("../models/mayow/personaje2.fbx");
@@ -536,13 +570,12 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 		std::cout << "Fallo la carga de textura" << std::endl;
 	textureLandingPad.freeImage(); // Liberamos memoria
 
-
-	// Texturas del blendmapping
-	// Definiendo la textura roja
+	// Defininiendo texturas del mapa de mezclas
+	// Definiendo la textura
 	Texture textureR("../Textures/mud.png");
 	textureR.loadImage(); // Cargar la textura
-	glGenTextures(1, &textureRID); // Creando el id de la textura del landingpad
-	glBindTexture(GL_TEXTURE_2D, textureRID); // Se enlaza la textura
+	glGenTextures(1, &textureTerrainRID); // Creando el id de la textura del landingpad
+	glBindTexture(GL_TEXTURE_2D, textureTerrainRID); // Se enlaza la textura
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // Wrapping en el eje u
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // Wrapping en el eje v
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filtering de minimización
@@ -557,11 +590,11 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 		std::cout << "Fallo la carga de textura" << std::endl;
 	textureR.freeImage(); // Liberamos memoria
 
-	// Definiendo la textura verde
+	// Definiendo la textura
 	Texture textureG("../Textures/grassFlowers.png");
 	textureG.loadImage(); // Cargar la textura
-	glGenTextures(1, &textureGID); // Creando el id de la textura del landingpad
-	glBindTexture(GL_TEXTURE_2D, textureGID); // Se enlaza la textura
+	glGenTextures(1, &textureTerrainGID); // Creando el id de la textura del landingpad
+	glBindTexture(GL_TEXTURE_2D, textureTerrainGID); // Se enlaza la textura
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // Wrapping en el eje u
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // Wrapping en el eje v
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filtering de minimización
@@ -576,11 +609,11 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 		std::cout << "Fallo la carga de textura" << std::endl;
 	textureG.freeImage(); // Liberamos memoria
 
-	// Definiendo la textura axul
+	// Definiendo la textura
 	Texture textureB("../Textures/path.png");
 	textureB.loadImage(); // Cargar la textura
-	glGenTextures(1, &textureBID); // Creando el id de la textura del landingpad
-	glBindTexture(GL_TEXTURE_2D, textureBID); // Se enlaza la textura
+	glGenTextures(1, &textureTerrainBID); // Creando el id de la textura del landingpad
+	glBindTexture(GL_TEXTURE_2D, textureTerrainBID); // Se enlaza la textura
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // Wrapping en el eje u
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // Wrapping en el eje v
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filtering de minimización
@@ -595,12 +628,11 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 		std::cout << "Fallo la carga de textura" << std::endl;
 	textureB.freeImage(); // Liberamos memoria
 
-
 	// Definiendo la textura
-	Texture textureBlendMap("../Textures/blendMap-2024-1_2.png");
+	Texture textureBlendMap("../Textures/blendMap.png");
 	textureBlendMap.loadImage(); // Cargar la textura
-	glGenTextures(1, &textureBlendMapID); // Creando el id de la textura del landingpad
-	glBindTexture(GL_TEXTURE_2D, textureBlendMapID); // Se enlaza la textura
+	glGenTextures(1, &textureTerrainBlendMapID); // Creando el id de la textura del landingpad
+	glBindTexture(GL_TEXTURE_2D, textureTerrainBlendMapID); // Se enlaza la textura
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // Wrapping en el eje u
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // Wrapping en el eje v
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filtering de minimización
@@ -614,8 +646,6 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	else 
 		std::cout << "Fallo la carga de textura" << std::endl;
 	textureBlendMap.freeImage(); // Liberamos memoria
-
-
 
 }
 
@@ -674,6 +704,11 @@ void destroy() {
 	guardianModelAnimate.destroy();
 	cyborgModelAnimate.destroy();
 
+	//Lamparas
+	modelLamp1.destroy();
+	modelLamp2.destroy();
+	modelLamp2Post.destroy();
+
 	// Terrains objects Delete
 	terrain.destroy();
 
@@ -684,10 +719,10 @@ void destroy() {
 	glDeleteTextures(1, &textureWindowID);
 	glDeleteTextures(1, &textureHighwayID);
 	glDeleteTextures(1, &textureLandingPadID);
-	glDeleteTextures(1, &textureRID);
-	glDeleteTextures(1, &textureGID);
-	glDeleteTextures(1, &textureBID);
-	glDeleteTextures(1, &textureBlendMapID);
+	glDeleteTextures(1, &textureTerrainBID);
+	glDeleteTextures(1, &textureTerrainGID);
+	glDeleteTextures(1, &textureTerrainRID);
+	glDeleteTextures(1, &textureTerrainBlendMapID);
 
 	// Cube Maps Delete
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
@@ -986,10 +1021,9 @@ void applicationLoop() {
 					glm::value_ptr(projection));
 		shaderMulLighting.setMatrix4("view", 1, false,
 				glm::value_ptr(view));
-
 		// Settea la matriz de vista y projection al shader con multiples luces
 		shaderTerrain.setMatrix4("projection", 1, false,
-					glm::value_ptr(projection));
+				glm::value_ptr(projection));
 		shaderTerrain.setMatrix4("view", 1, false,
 				glm::value_ptr(view));
 
@@ -1001,7 +1035,6 @@ void applicationLoop() {
 		shaderMulLighting.setVectorFloat3("directionalLight.light.diffuse", glm::value_ptr(glm::vec3(0.7, 0.7, 0.7)));
 		shaderMulLighting.setVectorFloat3("directionalLight.light.specular", glm::value_ptr(glm::vec3(0.9, 0.9, 0.9)));
 		shaderMulLighting.setVectorFloat3("directionalLight.direction", glm::value_ptr(glm::vec3(-1.0, 0.0, 0.0)));
-
 
 		shaderTerrain.setVectorFloat3("viewPos", glm::value_ptr(camera->getPosition()));
 		shaderTerrain.setVectorFloat3("directionalLight.light.ambient", glm::value_ptr(glm::vec3(0.3, 0.3, 0.3)));
@@ -1029,16 +1062,16 @@ void applicationLoop() {
 		glBindTexture(GL_TEXTURE_2D, textureCespedID);
 		shaderTerrain.setInt("backgroundTexture", 0);
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, textureRID);
+		glBindTexture(GL_TEXTURE_2D, textureTerrainRID);
 		shaderTerrain.setInt("textureR", 1);
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, textureGID);
+		glBindTexture(GL_TEXTURE_2D, textureTerrainGID);
 		shaderTerrain.setInt("textureG", 2);
 		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, textureBID);
+		glBindTexture(GL_TEXTURE_2D, textureTerrainBID);
 		shaderTerrain.setInt("textureB", 3);
 		glActiveTexture(GL_TEXTURE4);
-		glBindTexture(GL_TEXTURE_2D, textureBlendMapID);
+		glBindTexture(GL_TEXTURE_2D, textureTerrainBlendMapID);
 		shaderTerrain.setInt("textureBlendMap", 4);
 		shaderTerrain.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(80, 80)));
 		terrain.setPosition(glm::vec3(100, 0, 100));
@@ -1112,6 +1145,29 @@ void applicationLoop() {
 		modelLamboRearRightWheel.render(modelMatrixLamboChasis);
 		// Se regresa el cull faces IMPORTANTE para las puertas
 		glEnable(GL_CULL_FACE);
+
+		//Render lamp1
+		for(int i=0; i<lamp1Position.size(); i++){
+			lamp1Position[i].y = terrain.getHeightTerrain(lamp1Position[i].x,lamp1Position[i].z);
+			modelLamp1.setPosition(lamp1Position[i]);
+			modelLamp1.setScale(glm::vec3(0.5));
+			modelLamp1.setOrientation(glm::vec3(0, lamp10rientation[i], 0));
+			modelLamp1.render();
+		}
+		//Render lamp2
+		for(int i=0; i<lamp2Position.size(); i++){
+			lamp2Position[i].y = terrain.getHeightTerrain(lamp2Position[i].x,lamp2Position[i].z);
+			modelLamp2.setPosition(lamp2Position[i]);
+			modelLamp2.setScale(glm::vec3(0.5));
+			modelLamp2.setOrientation(glm::vec3(0, lamp20rientation[i], 0));
+			modelLamp2.render();
+			modelLamp2Post.setPosition(lamp2Position[i]);
+			modelLamp2Post.setScale(glm::vec3(0.5));
+			modelLamp2Post.setOrientation(glm::vec3(0, lamp20rientation[i], 0));
+			modelLamp2Post.render();
+		}
+
+
 
 		// Dart lego
 		// Se deshabilita el cull faces IMPORTANTE para la capa
