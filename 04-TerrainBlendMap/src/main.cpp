@@ -107,6 +107,9 @@ Model cyborgModelAnimate;
 
 //Cyborg que se hizo en la practica 2
 Model cyborgAnimate;
+//Mixamo 1 modelo bailando
+Model modelChicaRosaAnimate;
+
 
 // Terrain model instance
 //Terrain terrain(-1, -1, 200, 8, "../Textures/heightmap.png");
@@ -148,6 +151,7 @@ glm::mat4 modelMatrixCowboy = glm::mat4(1.0f);
 glm::mat4 modelMatrixGuardian = glm::mat4(1.0f);
 glm::mat4 modelMatrixCyborg = glm::mat4(1.0f);
 glm::mat4 modelMatrixCyborg2 = glm::mat4(1.0f);
+glm::mat4 modelMatrixChicaRosa = glm::mat4(1.0f); 
 
 int animationMayowIndex = 1;
 int mueve = 1;
@@ -382,6 +386,10 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	//Cybororg p2
 	cyborgAnimate.loadModel("../models/cyborg2/cyborg_cam_repos.fbx");
 	cyborgAnimate.setShader(&shaderMulLighting);
+
+	//Boa Hancock
+	modelChicaRosaAnimate.loadModel("../models/1855773_Blender-to-OBJ.zip/chica_rosa.fbx");
+	modelChicaRosaAnimate.setShader(&shaderMulLighting);
 
 	// Terreno
 	terrain.init();
@@ -687,6 +695,11 @@ void destroy() {
 	//p2
 	cyborgAnimate.destroy();
 
+	//mixamo 1
+	modelChicaRosaAnimate.destroy();
+
+
+
 	// Terrains objects Delete
 	terrain.destroy();
 
@@ -977,6 +990,9 @@ void applicationLoop() {
 
 	modelMatrixCyborg2 = glm::translate(modelMatrixCyborg, glm::vec3(-5.0f, 0.05f, -15.0f));
 
+	modelMatrixChicaRosa = glm::translate(modelMatrixChicaRosa, glm::vec3(4.0f, 0.05f,-20.0f));
+
+
 	// Variables to interpolation key frames
 	fileName = "../animaciones/animation_dart_joints.txt";
 	keyFramesDartJoints = getKeyRotFrames(fileName);
@@ -1201,7 +1217,6 @@ void applicationLoop() {
 		// Se regresa el cull faces IMPORTANTE para la capa
 		glEnable(GL_CULL_FACE);
 
-		
 		glm::mat4 modelMatrixTorso = glm::mat4(modelMatrixBuzz);
 		modelMatrixTorso = glm::scale(modelMatrixTorso, glm::vec3(3.0));
 		modelBuzzTorso.render(modelMatrixTorso);
@@ -1248,7 +1263,6 @@ void applicationLoop() {
 		mayowModelAnimate.setAnimationIndex(animationMayowIndex);
 		mayowModelAnimate.render(modelMatrixMayowBody);
 		animationMayowIndex = 1;
-
 		//cyborg p2
 		modelMatrixCyborg2[3][1]=
 		terrain.getHeightTerrain(modelMatrixCyborg2[3][0],modelMatrixCyborg2[3][2]);//hacer la interpolacion en base a la posicion x y z del modelo
@@ -1268,8 +1282,6 @@ void applicationLoop() {
 		cyborgAnimate.render(modelMatrixCyborgBody2);
 		mueve = 1;
 
-
-
 		modelMatrixCowboy[3][1] = terrain.getHeightTerrain(modelMatrixCowboy[3][0], modelMatrixCowboy[3][2]);
 		glm::mat4 modelMatrixCowboyBody = glm::mat4(modelMatrixCowboy);
 		modelMatrixCowboyBody = glm::scale(modelMatrixCowboyBody, glm::vec3(0.0021f));
@@ -1285,6 +1297,12 @@ void applicationLoop() {
 		modelMatrixCyborgBody = glm::scale(modelMatrixCyborgBody, glm::vec3(0.009f));
 		cyborgModelAnimate.setAnimationIndex(1);
 		cyborgModelAnimate.render(modelMatrixCyborgBody);
+
+
+		modelMatrixChicaRosa[3][1] = terrain.getHeightTerrain(modelMatrixChicaRosa[3][0], modelMatrixChicaRosa[3][2]);
+		glm::mat4 modelMatrixChicaRosaBody = glm::mat4(modelMatrixChicaRosa);
+		modelMatrixChicaRosaBody = glm::scale(modelMatrixChicaRosaBody, glm::vec3(5.0f));
+		modelChicaRosaAnimate.render(modelMatrixChicaRosaBody);
 
 		/*******************************************
 		 * Skybox
