@@ -63,6 +63,11 @@ Box boxWalls;
 Box boxHighway;
 Box boxLandingPad;   //para area de aterrizaje
 Sphere esfera1(20,20);
+
+//Tarea 3
+Box boxTarea3;
+
+
 // Models complex instances
 Model modelRock;
 Model modelAircraft;
@@ -121,6 +126,9 @@ Model modelMC2;
 
 GLuint textureCespedID, textureWallID, textureWindowID, textureHighwayID, textureLandingPadID;
 GLuint skyboxTextureID;
+
+// TEXTURAS Tarea3
+GLuint textureWaterID, textureSpongeID;
 
 GLenum types[6] = {
 GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -306,6 +314,11 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	boxLandingPad.init();
 	boxLandingPad.setShader(&shaderMulLighting);
 
+	//Tarea 3
+	boxTarea3;
+	boxTarea3.init();
+	boxTarea3.setShader(&shaderMulLightingMT);
+
 	modelRock.loadModel("../models/rock/rock.obj");
 	modelRock.setShader(&shaderMulLighting);
 
@@ -409,8 +422,6 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelMC2.loadModel("../models/chica_rosa_1/model.obj");
 	modelMC2.setShader(&shaderMulLighting);
 	
-
-
 	camera->setPosition(glm::vec3(0.0, 3.0, 4.0));
 	
 	// Carga de texturas para el skybox
@@ -584,11 +595,73 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	// Libera la memoria de la textura
 	textureLandingPad.freeImage();
 
+	//TAREA 3
 
+	// Definiendo la Textura a utilizar
+	Texture textureWater("../Textures/water2.jpg");
+	//cargando el mapa de BITS
+	textureWater.loadImage();
+	// Creando la textura con id 1
+	glGenTextures(1, &textureWaterID);
+	// Enlazar esa textura a una tipo de textura de 2D.
+	glBindTexture(GL_TEXTURE_2D, textureWaterID);
+
+	// configurando  the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// configurando texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Verifica si se pudo abrir la textura
+	
+	// Verifica si se pudo abrir la textura
+	if (textureWater.getData()) {
+		// Transferis los datos de la imagen a memoria
+		// Tipo de textura, Mipmaps, Formato interno de openGL, ancho, alto, Mipmaps,
+		// Formato interno de la libreria de la imagen, el tipo de dato y al apuntador
+		// a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, textureWater.getChannels() == 3 ? GL_RGB : GL_RGBA, textureWater.getWidth(), textureWater.getHeight(), 0,
+		textureWater.getChannels() == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, textureWater.getData());
+		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	textureWater.freeImage();
+
+
+	// Definiendo la Textura a utilizar
+	Texture textureSponge("../Textures/sponge_color2.jpg");
+	//cargando el mapa de BITS
+	textureSponge.loadImage();
+	// Creando la textura con id 1
+	glGenTextures(1, &textureSpongeID);
+	// Enlazar esa textura a una tipo de textura de 2D.
+	glBindTexture(GL_TEXTURE_2D, textureSpongeID);
+
+	// configurando  the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// configurando texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Verifica si se pudo abrir la textura
+	
+	// Verifica si se pudo abrir la textura
+	if (textureSponge.getData()) {
+		// Transferis los datos de la imagen a memoria
+		// Tipo de textura, Mipmaps, Formato interno de openGL, ancho, alto, Mipmaps,
+		// Formato interno de la libreria de la imagen, el tipo de dato y al apuntador
+		// a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, textureSponge.getChannels() == 3 ? GL_RGB : GL_RGBA, textureSponge.getWidth(), textureSponge.getHeight(), 0,
+		textureSponge.getChannels() == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, textureSponge.getData());
+		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	textureSponge.freeImage();
 }
-
-
-
 
 
 void destroy() {
@@ -609,6 +682,12 @@ void destroy() {
 	boxWalls.destroy();
 	boxHighway.destroy();
 	boxLandingPad.destroy();
+	esfera1.destroy();
+	
+	
+	//TAREA 3
+	boxTarea3.destroy();
+
 
 	// Custom objects Delete
 	modelAircraft.destroy();
@@ -667,6 +746,10 @@ void destroy() {
 	glDeleteTextures(1, &textureWindowID);
 	glDeleteTextures(1, &textureHighwayID);
 	glDeleteTextures(1, &textureLandingPadID);
+	
+	//Tarea 3
+	glDeleteTextures(1, &textureWaterID);
+	glDeleteTextures(1, &textureSpongeID);
 
 	// Cube Maps Delete
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
@@ -1152,6 +1235,22 @@ void applicationLoop() {
 		esfera1.render();
 
 
+
+
+
+		/************************
+		*  renderizado del cubo de la TAREA    boxTarea3;   textureWaterID, textureSpongeID;
+		***********************************/
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureWaterID);
+		shaderMulLightingMT.setInt("texture1",0);
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, textureSpongeID);
+		shaderMulLightingMT.setInt("texture2",3);
+
+		boxTarea3.setScale(glm::vec3(2.5f,2.5f,2.5f));
+		boxTarea3.setPosition(glm::vec3(2.0f, 3.0f, 0.0));
+		boxTarea3.render();
 
 
 		/*******************************************
