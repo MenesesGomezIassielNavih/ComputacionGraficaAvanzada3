@@ -107,8 +107,11 @@ Model cyborgModelAnimate;
 
 //Cyborg que se hizo en la practica 2
 Model cyborgAnimate;
-//Mixamo 1 modelo bailando
+//Mixamo 1 modelo estatica
 Model modelChicaRosaAnimate;
+
+//Mixamo 2 modelo bailando
+Model modelChicaVerdeAnimate;
 
 
 // Terrain model instance
@@ -118,6 +121,9 @@ Terrain terrain(-1.0f,-1.0f,200.0f,8.0f,"../Textures/Terrain2024-1.png");
 GLuint textureCespedID, textureWallID, textureWindowID, textureHighwayID, textureLandingPadID;
 GLuint skyboxTextureID;
 GLuint textureRID, textureGID, textureBID, textureBlendMapID;
+
+// TEXTURAS P4
+GLuint textureNieveID, textureCaminoID, textureTierraID, textureFloresID;
 
 GLenum types[6] = {
 GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -152,6 +158,7 @@ glm::mat4 modelMatrixGuardian = glm::mat4(1.0f);
 glm::mat4 modelMatrixCyborg = glm::mat4(1.0f);
 glm::mat4 modelMatrixCyborg2 = glm::mat4(1.0f);
 glm::mat4 modelMatrixChicaRosa = glm::mat4(1.0f); 
+glm::mat4 modelMatrixChicaVerde = glm::mat4(1.0f); 
 
 int animationMayowIndex = 1;
 int mueve = 1;
@@ -387,9 +394,13 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	cyborgAnimate.loadModel("../models/cyborg2/cyborg_cam_repos.fbx");
 	cyborgAnimate.setShader(&shaderMulLighting);
 
-	//Boa Hancock
-	modelChicaRosaAnimate.loadModel("../models/1855773_Blender-to-OBJ.zip/chica_rosa.fbx");
+	//Mixamo 1
+	modelChicaRosaAnimate.loadModel("../models/Chica_Rosa/estatico_chica.fbx");
 	modelChicaRosaAnimate.setShader(&shaderMulLighting);
+
+	//Mixamo
+	modelChicaVerdeAnimate.loadModel("../models/Chica_Verde/bailando_chica.fbx");
+	modelChicaVerdeAnimate.setShader(&shaderMulLighting);
 
 	// Terreno
 	terrain.init();
@@ -617,6 +628,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 
 	// Definiendo la textura
 	Texture textureBlendMap("../Textures/blendMap-2024-1_2.png");
+	//Texture textureBlendMap("../Textures/blendMap2.png");
 	textureBlendMap.loadImage(); // Cargar la textura
 	glGenTextures(1, &textureBlendMapID); // Creando el id de la textura del landingpad
 	glBindTexture(GL_TEXTURE_2D, textureBlendMapID); // Se enlaza la textura
@@ -636,6 +648,138 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 
 
 
+	// TEXTURAS P4
+
+	// Definiendo la Textura a utilizar
+	Texture textureNieve("../Textures/Texture_Set_Vol_24_Snow_PNG/Vol_24_5_Base_Color.png");
+	//cargando el mapa de BITS
+	textureNieve.loadImage();
+	// Creando la textura con id 1
+	glGenTextures(1, &textureNieveID);
+	// Enlazar esa textura a una tipo de textura de 2D.
+	glBindTexture(GL_TEXTURE_2D, textureNieveID);
+
+	// configurando  the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// configurando texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Verifica si se pudo abrir la textura
+	
+	// Verifica si se pudo abrir la textura
+	if (textureNieve.getData()) {
+		// Transferis los datos de la imagen a memoria
+		// Tipo de textura, Mipmaps, Formato interno de openGL, ancho, alto, Mipmaps,
+		// Formato interno de la libreria de la imagen, el tipo de dato y al apuntador
+		// a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, textureNieve.getChannels() == 3 ? GL_RGB : GL_RGBA, textureNieve.getWidth(), textureNieve.getHeight(), 0,
+		textureNieve.getChannels() == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, textureNieve.getData());
+		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	textureNieve.freeImage();
+
+
+	// Definiendo la Textura a utilizar
+	Texture textureCamino("../Textures/PBR_Road_textures/V_01/Road_v01_2_BaseColor.png");
+	//cargando el mapa de BITS
+	textureCamino.loadImage();
+	// Creando la textura con id 1
+	glGenTextures(1, &textureCaminoID);
+	// Enlazar esa textura a una tipo de textura de 2D.
+	glBindTexture(GL_TEXTURE_2D, textureCaminoID);
+
+	// configurando  the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// configurando texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Verifica si se pudo abrir la textura
+	
+	// Verifica si se pudo abrir la textura
+	if (textureCamino.getData()) {
+		// Transferis los datos de la imagen a memoria
+		// Tipo de textura, Mipmaps, Formato interno de openGL, ancho, alto, Mipmaps,
+		// Formato interno de la libreria de la imagen, el tipo de dato y al apuntador
+		// a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, textureCamino.getChannels() == 3 ? GL_RGB : GL_RGBA, textureCamino.getWidth(), textureCamino.getHeight(), 0,
+		textureCamino.getChannels() == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, textureCamino.getData());
+		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	textureCamino.freeImage();
+
+
+	// Definiendo la Textura a utilizar
+	Texture textureTierra("../Textures/PBR_GroundGravel_textures/V_03/GroundGravel_BaseColor_v03.png");
+	//cargando el mapa de BITS
+	textureTierra.loadImage();
+	// Creando la textura con id 1
+	glGenTextures(1, &textureTierraID);
+	// Enlazar esa textura a una tipo de textura de 2D.
+	glBindTexture(GL_TEXTURE_2D, textureTierraID);
+
+	// configurando  the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// configurando texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Verifica si se pudo abrir la textura
+	
+	// Verifica si se pudo abrir la textura
+	if (textureTierra.getData()) {
+		// Transferis los datos de la imagen a memoria
+		// Tipo de textura, Mipmaps, Formato interno de openGL, ancho, alto, Mipmaps,
+		// Formato interno de la libreria de la imagen, el tipo de dato y al apuntador
+		// a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, textureTierra.getChannels() == 3 ? GL_RGB : GL_RGBA, textureTierra.getWidth(), textureTierra.getHeight(), 0,
+		textureTierra.getChannels() == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, textureTierra.getData());
+		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	textureTierra.freeImage();
+
+
+	// Definiendo la Textura a utilizar
+	Texture textureFlores("../Textures/Texture_Set_Vol_64_Grass_png/Vol_64_3_Base_Color.png");
+	//cargando el mapa de BITS
+	textureFlores.loadImage();
+	// Creando la textura con id 1
+	glGenTextures(1, &textureFloresID);
+	// Enlazar esa textura a una tipo de textura de 2D.
+	glBindTexture(GL_TEXTURE_2D, textureFloresID);
+
+	// configurando  the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// configurando texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Verifica si se pudo abrir la textura
+	
+	// Verifica si se pudo abrir la textura
+	if (textureFlores.getData()) {
+		// Transferis los datos de la imagen a memoria
+		// Tipo de textura, Mipmaps, Formato interno de openGL, ancho, alto, Mipmaps,
+		// Formato interno de la libreria de la imagen, el tipo de dato y al apuntador
+		// a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, textureFlores.getChannels() == 3 ? GL_RGB : GL_RGBA, textureFlores.getWidth(), textureFlores.getHeight(), 0,
+		textureFlores.getChannels() == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, textureFlores.getData());
+		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	textureFlores.freeImage();
 }
 
 void destroy() {
@@ -697,8 +841,8 @@ void destroy() {
 
 	//mixamo 1
 	modelChicaRosaAnimate.destroy();
-
-
+	//mixamo 2
+	modelChicaVerdeAnimate.destroy();
 
 	// Terrains objects Delete
 	terrain.destroy();
@@ -710,6 +854,12 @@ void destroy() {
 	glDeleteTextures(1, &textureWindowID);
 	glDeleteTextures(1, &textureHighwayID);
 	glDeleteTextures(1, &textureLandingPadID);
+
+	glDeleteTextures(1, &textureNieveID);
+	glDeleteTextures(1, &textureCaminoID);
+	glDeleteTextures(1, &textureTierraID);
+	glDeleteTextures(1, &textureFloresID);
+
 	glDeleteTextures(1, &textureRID);
 	glDeleteTextures(1, &textureGID);
 	glDeleteTextures(1, &textureBID);
@@ -990,7 +1140,9 @@ void applicationLoop() {
 
 	modelMatrixCyborg2 = glm::translate(modelMatrixCyborg, glm::vec3(-5.0f, 0.05f, -15.0f));
 
-	modelMatrixChicaRosa = glm::translate(modelMatrixChicaRosa, glm::vec3(4.0f, 0.05f,-20.0f));
+	modelMatrixChicaRosa = glm::translate(modelMatrixChicaRosa, glm::vec3(4.0f, 0.05f,-10.0f));
+
+	modelMatrixChicaVerde = glm::translate(modelMatrixChicaVerde, glm::vec3(9.0f, 0.05f,-10.0f));
 
 
 	// Variables to interpolation key frames
@@ -1078,16 +1230,20 @@ void applicationLoop() {
 		 *******************************************/
 		// Se activa la textura del agua
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureCespedID);
+	//	glBindTexture(GL_TEXTURE_2D, textureCespedID);
+		glBindTexture(GL_TEXTURE_2D, textureFloresID);
 		shaderTerrain.setInt("backgroundTexture", 0);
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, textureRID);
+	//	glBindTexture(GL_TEXTURE_2D, textureRID);
+		glBindTexture(GL_TEXTURE_2D, textureTierraID);
 		shaderTerrain.setInt("textureR", 1);
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, textureGID);
+	//	glBindTexture(GL_TEXTURE_2D, textureGID);
+		glBindTexture(GL_TEXTURE_2D, textureNieveID);
 		shaderTerrain.setInt("textureG", 2);
 		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, textureBID);
+	//	glBindTexture(GL_TEXTURE_2D, textureBID);
+		glBindTexture(GL_TEXTURE_2D, textureCaminoID);
 		shaderTerrain.setInt("textureB", 3);
 		glActiveTexture(GL_TEXTURE4);
 		glBindTexture(GL_TEXTURE_2D, textureBlendMapID);
@@ -1097,6 +1253,7 @@ void applicationLoop() {
 		terrain.render();
 		shaderTerrain.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(0, 0)));
 		glBindTexture(GL_TEXTURE_2D, 0);
+
 
 		/*******************************************
 		 * Custom objects obj
@@ -1301,8 +1458,14 @@ void applicationLoop() {
 
 		modelMatrixChicaRosa[3][1] = terrain.getHeightTerrain(modelMatrixChicaRosa[3][0], modelMatrixChicaRosa[3][2]);
 		glm::mat4 modelMatrixChicaRosaBody = glm::mat4(modelMatrixChicaRosa);
-		modelMatrixChicaRosaBody = glm::scale(modelMatrixChicaRosaBody, glm::vec3(5.0f));
+		modelMatrixChicaRosaBody = glm::scale(modelMatrixChicaRosaBody, glm::vec3(1.0f));
 		modelChicaRosaAnimate.render(modelMatrixChicaRosaBody);
+
+		modelMatrixChicaVerde[3][1] = terrain.getHeightTerrain(modelMatrixChicaVerde[3][0], modelMatrixChicaVerde[3][2]);
+		glm::mat4 modelMatrixChicaVerdeBody = glm::mat4(modelMatrixChicaVerde);
+		modelMatrixChicaVerdeBody = glm::scale(modelMatrixChicaVerdeBody, glm::vec3(1.0f));
+		modelChicaVerdeAnimate.render(modelMatrixChicaVerdeBody);
+
 
 		/*******************************************
 		 * Skybox
