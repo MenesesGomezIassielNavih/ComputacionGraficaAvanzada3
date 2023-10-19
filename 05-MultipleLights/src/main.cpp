@@ -100,6 +100,7 @@ Model modelBuzzLeftHand;
 Model modelLamp1;
 Model modelLamp2;
 Model modelLamp2Post;
+Model modelLamp3;
 
 // Modelos animados
 // Mayow
@@ -110,12 +111,22 @@ Model cowboyModelAnimate;
 Model guardianModelAnimate;
 // Cybog
 Model cyborgModelAnimate;
-// Terrain model instance
-Terrain terrain(-1, -1, 200, 8, "../Textures/heightmap.png");
 
+//Cyborg que se hizo en la practica 2
+Model cyborgAnimate;
+//Mixamo 1 modelo estatica
+Model modelChicaRosaAnimate;
+
+// Terrain model instance
+//Terrain terrain(-1, -1, 200, 8, "../Textures/heightmap.png");
+
+Terrain terrain(-1.0f,-1.0f,200.0f,8.0f,"../Textures/Terrain2024-1.png");
 GLuint textureCespedID, textureWallID, textureWindowID, textureHighwayID, textureLandingPadID;
 GLuint textureTerrainRID, textureTerrainGID, textureTerrainBID, textureTerrainBlendMapID;
 GLuint skyboxTextureID;
+
+// TEXTURAS P4
+GLuint textureNieveID, textureCaminoID, textureTierraID, textureFloresID;
 
 GLenum types[6] = {
 GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -148,8 +159,12 @@ glm::mat4 modelMatrixMayow = glm::mat4(1.0f);
 glm::mat4 modelMatrixCowboy = glm::mat4(1.0f);
 glm::mat4 modelMatrixGuardian = glm::mat4(1.0f);
 glm::mat4 modelMatrixCyborg = glm::mat4(1.0f);
+glm::mat4 modelMatrixCyborg2 = glm::mat4(1.0f);
+glm::mat4 modelMatrixChicaRosa = glm::mat4(1.0f); 
+
 
 int animationMayowIndex = 1;
+int mueve = 1;
 float rotDartHead = 0.0, rotDartLeftArm = 0.0, rotDartLeftHand = 0.0, rotDartRightArm = 0.0, rotDartRightHand = 0.0, rotDartLeftLeg = 0.0, rotDartRightLeg = 0.0;
 float rotBuzzHead = 0.0, rotBuzzLeftarm = 0.0, rotBuzzLeftForeArm = 0.0, rotBuzzLeftHand = 0.0;
 int modelSelected = 0;
@@ -333,7 +348,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	modelHeliChasis.setShader(&shaderMulLighting);
 	modelHeliHeli.loadModel("../models/Helicopter/Mi_24_heli.obj");
 	modelHeliHeli.setShader(&shaderMulLighting);
-	modelHeliHeliBack.loadModel("../models/Helicopter/Mi_24_heli_back.obj");
+	modelHeliHeliBack.loadModel("../models/Helicopter/Mi_24_heli_rear.obj");
 	modelHeliHeliBack.setShader(&shaderMulLighting);
 	// Lamborginhi
 	modelLambo.loadModel("../models/Lamborginhi_Aventador_OBJ/Lamborghini_Aventador_chasis.obj");
@@ -408,6 +423,17 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	// Cyborg
 	cyborgModelAnimate.loadModel("../models/cyborg/cyborg.fbx");
 	cyborgModelAnimate.setShader(&shaderMulLighting);
+
+
+	//Cybororg p2
+	cyborgAnimate.loadModel("../models/cyborg2/cyborg_cam_repos.fbx");
+	cyborgAnimate.setShader(&shaderMulLighting);
+
+	//Mixamo 1
+	modelChicaRosaAnimate.loadModel("../models/mona/caminando7.fbx");
+	modelChicaRosaAnimate.setShader(&shaderMulLighting);
+
+
 
 	// Terreno
 	terrain.init();
@@ -650,6 +676,139 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 		std::cout << "Fallo la carga de textura" << std::endl;
 	textureBlendMap.freeImage(); // Liberamos memoria
 
+		// TEXTURAS P4
+
+	// Definiendo la Textura a utilizar
+	Texture textureNieve("../Textures/Texture_Set_Vol_24_Snow_PNG/Vol_24_5_Base_Color.png");
+	//cargando el mapa de BITS
+	textureNieve.loadImage();
+	// Creando la textura con id 1
+	glGenTextures(1, &textureNieveID);
+	// Enlazar esa textura a una tipo de textura de 2D.
+	glBindTexture(GL_TEXTURE_2D, textureNieveID);
+
+	// configurando  the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// configurando texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Verifica si se pudo abrir la textura
+	
+	// Verifica si se pudo abrir la textura
+	if (textureNieve.getData()) {
+		// Transferis los datos de la imagen a memoria
+		// Tipo de textura, Mipmaps, Formato interno de openGL, ancho, alto, Mipmaps,
+		// Formato interno de la libreria de la imagen, el tipo de dato y al apuntador
+		// a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, textureNieve.getChannels() == 3 ? GL_RGB : GL_RGBA, textureNieve.getWidth(), textureNieve.getHeight(), 0,
+		textureNieve.getChannels() == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, textureNieve.getData());
+		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	textureNieve.freeImage();
+
+
+	// Definiendo la Textura a utilizar
+	Texture textureCamino("../Textures/PBR_Road_textures/V_01/Road_v01_2_BaseColor.png");
+	//cargando el mapa de BITS
+	textureCamino.loadImage();
+	// Creando la textura con id 1
+	glGenTextures(1, &textureCaminoID);
+	// Enlazar esa textura a una tipo de textura de 2D.
+	glBindTexture(GL_TEXTURE_2D, textureCaminoID);
+
+	// configurando  the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// configurando texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Verifica si se pudo abrir la textura
+	
+	// Verifica si se pudo abrir la textura
+	if (textureCamino.getData()) {
+		// Transferis los datos de la imagen a memoria
+		// Tipo de textura, Mipmaps, Formato interno de openGL, ancho, alto, Mipmaps,
+		// Formato interno de la libreria de la imagen, el tipo de dato y al apuntador
+		// a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, textureCamino.getChannels() == 3 ? GL_RGB : GL_RGBA, textureCamino.getWidth(), textureCamino.getHeight(), 0,
+		textureCamino.getChannels() == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, textureCamino.getData());
+		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	textureCamino.freeImage();
+
+
+	// Definiendo la Textura a utilizar
+	Texture textureTierra("../Textures/PBR_GroundGravel_textures/V_03/GroundGravel_BaseColor_v03.png");
+	//cargando el mapa de BITS
+	textureTierra.loadImage();
+	// Creando la textura con id 1
+	glGenTextures(1, &textureTierraID);
+	// Enlazar esa textura a una tipo de textura de 2D.
+	glBindTexture(GL_TEXTURE_2D, textureTierraID);
+
+	// configurando  the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// configurando texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Verifica si se pudo abrir la textura
+	
+	// Verifica si se pudo abrir la textura
+	if (textureTierra.getData()) {
+		// Transferis los datos de la imagen a memoria
+		// Tipo de textura, Mipmaps, Formato interno de openGL, ancho, alto, Mipmaps,
+		// Formato interno de la libreria de la imagen, el tipo de dato y al apuntador
+		// a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, textureTierra.getChannels() == 3 ? GL_RGB : GL_RGBA, textureTierra.getWidth(), textureTierra.getHeight(), 0,
+		textureTierra.getChannels() == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, textureTierra.getData());
+		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	textureTierra.freeImage();
+
+
+	// Definiendo la Textura a utilizar
+	Texture textureFlores("../Textures/Texture_Set_Vol_64_Grass_png/Vol_64_3_Base_Color.png");
+	//cargando el mapa de BITS
+	textureFlores.loadImage();
+	// Creando la textura con id 1
+	glGenTextures(1, &textureFloresID);
+	// Enlazar esa textura a una tipo de textura de 2D.
+	glBindTexture(GL_TEXTURE_2D, textureFloresID);
+
+	// configurando  the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// configurando texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Verifica si se pudo abrir la textura
+	
+	// Verifica si se pudo abrir la textura
+	if (textureFlores.getData()) {
+		// Transferis los datos de la imagen a memoria
+		// Tipo de textura, Mipmaps, Formato interno de openGL, ancho, alto, Mipmaps,
+		// Formato interno de la libreria de la imagen, el tipo de dato y al apuntador
+		// a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, textureFlores.getChannels() == 3 ? GL_RGB : GL_RGBA, textureFlores.getWidth(), textureFlores.getHeight(), 0,
+		textureFlores.getChannels() == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, textureFlores.getData());
+		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	textureFlores.freeImage();
+
 }
 
 void destroy() {
@@ -706,6 +865,11 @@ void destroy() {
 	cowboyModelAnimate.destroy();
 	guardianModelAnimate.destroy();
 	cyborgModelAnimate.destroy();
+	//p2
+	cyborgAnimate.destroy();
+
+	//mixamo 1
+	modelChicaRosaAnimate.destroy();
 
 	//Lamparas
 	modelLamp1.destroy();
@@ -726,6 +890,12 @@ void destroy() {
 	glDeleteTextures(1, &textureTerrainGID);
 	glDeleteTextures(1, &textureTerrainRID);
 	glDeleteTextures(1, &textureTerrainBlendMapID);
+
+	glDeleteTextures(1, &textureNieveID);
+	glDeleteTextures(1, &textureCaminoID);
+	glDeleteTextures(1, &textureTierraID);
+	glDeleteTextures(1, &textureFloresID);
+
 
 	// Cube Maps Delete
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
@@ -940,6 +1110,26 @@ bool processInput(bool continueApplication) {
 		animationMayowIndex = 0;
 	}
 
+	//movi de cyborg
+	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS){
+		
+		mueve = 0;
+		modelMatrixCyborg2 = glm::rotate(modelMatrixCyborg2, glm::radians(1.0f), glm::vec3(0, 1, 0));
+		
+	}else if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS){
+		mueve = 0;
+		modelMatrixCyborg2 = glm::rotate(modelMatrixCyborg2, glm::radians(-1.0f), glm::vec3(0, 1, 0));
+		
+	}if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS){
+		mueve = 0;
+		modelMatrixCyborg2 = glm::translate(modelMatrixCyborg2, glm::vec3(0, 0, 0.02));
+		
+	}else if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS){
+		mueve = 0;
+		modelMatrixCyborg2 = glm::translate(modelMatrixCyborg2, glm::vec3(0, 0, -0.02));
+		
+	}
+
 	glfwPollEvents();
 	return continueApplication;
 }
@@ -956,6 +1146,16 @@ void applicationLoop() {
 	float rotWheelsY = 0.0;
 	int numberAdvance = 0;
 	int maxAdvance = 0.0;
+
+
+	int state2 = 0;
+	float advanceCount2 = 0.0;
+	float rotCount2 = 0.0;
+	float rotWheelsX2 = 0.0;
+	float rotWheelsY2 = 0.0;
+	int numberAdvance2 = 0; 
+	int maxAdvance2 = 0.0;
+	int maxAdvance3 = 0.0;
 
 	matrixModelRock = glm::translate(matrixModelRock, glm::vec3(-3.0, 0.0, 2.0));
 
@@ -978,6 +1178,11 @@ void applicationLoop() {
 	modelMatrixGuardian = glm::rotate(modelMatrixGuardian, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
 
 	modelMatrixCyborg = glm::translate(modelMatrixCyborg, glm::vec3(5.0f, 0.05, 0.0f));
+
+	modelMatrixCyborg2 = glm::translate(modelMatrixCyborg, glm::vec3(-5.0f, 0.05f, -15.0f));
+
+	modelMatrixChicaRosa = glm::translate(modelMatrixChicaRosa, glm::vec3(0.0f, 0.7, -1.0f));
+
 
 	// Variables to interpolation key frames
 	fileName = "../animaciones/animation_dart_joints.txt";
@@ -1075,6 +1280,63 @@ void applicationLoop() {
 		shaderTerrain.setFloat("spotLights[0].outerCutOff", cos(glm::radians(15.0f)));
 
 
+		/*
+		LUCES LAMBO
+		*/
+		shaderMulLighting.setInt("spotLightCount", 2);
+		shaderTerrain.setInt("spotLightCount", 2);
+		glm::vec3 spotPositionLambo1 = glm:: vec3(modelMatrixLambo *  glm::vec4(0.76, 2.66, 5.2, 1.0));
+		
+		shaderMulLighting.setVectorFloat3("spotLights[1].light.ambient", glm::value_ptr(glm::vec3(0.2, 0.16, 0.01)));
+		shaderMulLighting.setVectorFloat3("spotLights[1].light.diffuse", glm::value_ptr(glm::vec3(0.4, 0.32, 0.02)));
+		shaderMulLighting.setVectorFloat3("spotLights[1].light.specular", glm::value_ptr(glm::vec3(0.6, 0.6, 0.03)));
+		shaderMulLighting.setVectorFloat3("spotLights[1].position", glm::value_ptr(spotPositionLambo1));
+		shaderMulLighting.setVectorFloat3("spotLights[1].direction", glm::value_ptr(spotPositionLambo1*glm::vec3(0.0,-1.0,0.0)));
+		shaderMulLighting.setFloat("spotLights[1].constant", 1.0);
+		shaderMulLighting.setFloat("spotLights[1].linear", 0.02);
+		shaderMulLighting.setFloat("spotLights[1].quadratic", 0.01);
+		shaderMulLighting.setFloat("spotLights[1].cutOff", cos(glm::radians(15.0f)));
+		shaderMulLighting.setFloat("spotLights[1].outerCutOff", cos(glm::radians(15.0f)));
+
+		shaderTerrain.setVectorFloat3("spotLights[1].light.ambient", glm::value_ptr(glm::vec3(0.2, 0.16, 0.01)));
+		shaderTerrain.setVectorFloat3("spotLights[1].light.diffuse", glm::value_ptr(glm::vec3(0.4, 0.32, 0.02)));
+		shaderTerrain.setVectorFloat3("spotLights[1].light.specular", glm::value_ptr(glm::vec3(0.6, 0.6, 0.03)));
+		shaderTerrain.setVectorFloat3("spotLights[1].position", glm::value_ptr(spotPositionLambo1));
+		shaderTerrain.setVectorFloat3("spotLights[1].direction", glm::value_ptr(spotPositionLambo1*glm::vec3(0.0,-1.0,0.0)));
+		shaderTerrain.setFloat("spotLights[1].constant", 1.0);
+		shaderTerrain.setFloat("spotLights[1].linear", 0.02);
+		shaderTerrain.setFloat("spotLights[1].quadratic", 0.01);
+		shaderTerrain.setFloat("spotLights[1].cutOff", cos(glm::radians(15.0f)));
+		shaderTerrain.setFloat("spotLights[1].outerCutOff", cos(glm::radians(15.0f)));
+
+		shaderMulLighting.setInt("spotLightCount", 3);
+		shaderTerrain.setInt("spotLightCount", 3);
+		glm::vec3 spotPositionLambo2 = glm:: vec3(modelMatrixLambo *  glm::vec4(-0.76, 2.66, 5.2, 1.0));
+		
+		shaderMulLighting.setVectorFloat3("spotLights[2].light.ambient", glm::value_ptr(glm::vec3(0.2, 0.16, 0.01)));
+		shaderMulLighting.setVectorFloat3("spotLights[2].light.diffuse", glm::value_ptr(glm::vec3(0.4, 0.32, 0.02)));
+		shaderMulLighting.setVectorFloat3("spotLights[2].light.specular", glm::value_ptr(glm::vec3(0.6, 0.6, 0.03)));
+		shaderMulLighting.setVectorFloat3("spotLights[2].position", glm::value_ptr(spotPositionLambo2));
+		shaderMulLighting.setVectorFloat3("spotLights[2].direction", glm::value_ptr(spotPositionLambo2*glm::vec3(0.0,-1.0,0.0)));
+		shaderMulLighting.setFloat("spotLights[2].constant", 1.0);
+		shaderMulLighting.setFloat("spotLights[2].linear", 0.02);
+		shaderMulLighting.setFloat("spotLights[2].quadratic", 0.01);
+		shaderMulLighting.setFloat("spotLights[2].cutOff", cos(glm::radians(15.0f)));
+		shaderMulLighting.setFloat("spotLights[2].outerCutOff", cos(glm::radians(15.0f)));
+
+		shaderTerrain.setVectorFloat3("spotLights[2].light.ambient", glm::value_ptr(glm::vec3(0.2, 0.16, 0.01)));
+		shaderTerrain.setVectorFloat3("spotLights[2].light.diffuse", glm::value_ptr(glm::vec3(0.4, 0.32, 0.02)));
+		shaderTerrain.setVectorFloat3("spotLights[2].light.specular", glm::value_ptr(glm::vec3(0.6, 0.6, 0.03)));
+		shaderTerrain.setVectorFloat3("spotLights[2].position", glm::value_ptr(spotPositionLambo2));
+		shaderTerrain.setVectorFloat3("spotLights[2].direction", glm::value_ptr(spotPositionLambo2*glm::vec3(0.0,-1.0,0.0)));
+		shaderTerrain.setFloat("spotLights[2].constant", 1.0);
+		shaderTerrain.setFloat("spotLights[2].linear", 0.02);
+		shaderTerrain.setFloat("spotLights[2].quadratic", 0.01);
+		shaderTerrain.setFloat("spotLights[2].cutOff", cos(glm::radians(10.0f)));
+		shaderTerrain.setFloat("spotLights[2].outerCutOff", cos(glm::radians(10.0f)));
+
+
+
 
 		/*******************************************
 		 * Propiedades PointLights
@@ -1135,7 +1397,7 @@ void applicationLoop() {
 		 * Terrain Cesped
 		 *******************************************/
 		// Se activa la textura del agua
-		glActiveTexture(GL_TEXTURE0);
+	/*	glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureCespedID);
 		shaderTerrain.setInt("backgroundTexture", 0);
 		glActiveTexture(GL_TEXTURE1);
@@ -1155,6 +1417,39 @@ void applicationLoop() {
 		terrain.render();
 		shaderTerrain.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(0, 0)));
 		glBindTexture(GL_TEXTURE_2D, 0);
+	*/
+
+		/*******************************************
+		 * Terrain Cesped 2
+		 *******************************************/
+		// Se activa la textura del agua
+		glActiveTexture(GL_TEXTURE0);
+	//	glBindTexture(GL_TEXTURE_2D, textureCespedID);
+		glBindTexture(GL_TEXTURE_2D, textureFloresID);
+		shaderTerrain.setInt("backgroundTexture", 0);
+		glActiveTexture(GL_TEXTURE1);
+	//	glBindTexture(GL_TEXTURE_2D, textureRID);
+		glBindTexture(GL_TEXTURE_2D, textureTierraID);
+		shaderTerrain.setInt("textureR", 1);
+		glActiveTexture(GL_TEXTURE2);
+	//	glBindTexture(GL_TEXTURE_2D, textureGID);
+		glBindTexture(GL_TEXTURE_2D, textureNieveID);
+		shaderTerrain.setInt("textureG", 2);
+		glActiveTexture(GL_TEXTURE3);
+	//	glBindTexture(GL_TEXTURE_2D, textureBID);
+		glBindTexture(GL_TEXTURE_2D, textureCaminoID);
+		shaderTerrain.setInt("textureB", 3);
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, textureTerrainBlendMapID);
+		shaderTerrain.setInt("textureBlendMap", 4);
+		shaderTerrain.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(80, 80)));
+		terrain.setPosition(glm::vec3(100, 0, 100));
+		terrain.render();
+		shaderTerrain.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(0, 0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+
+
 
 		/*******************************************
 		 * Custom objects obj
@@ -1204,7 +1499,7 @@ void applicationLoop() {
 		modelHeliHeliBack.render(modelMatrixHeliHeliBack);
 
 		// Lambo car
-		glDisable(GL_CULL_FACE);
+		/*glDisable(GL_CULL_FACE);
 		glm::mat4 modelMatrixLamboChasis = glm::mat4(modelMatrixLambo);
 		modelMatrixLamboChasis[3][1] = terrain.getHeightTerrain(modelMatrixLamboChasis[3][0], modelMatrixLamboChasis[3][2]);
 		modelMatrixLamboChasis = glm::scale(modelMatrixLamboChasis, glm::vec3(1.3, 1.3, 1.3));
@@ -1219,8 +1514,79 @@ void applicationLoop() {
 		modelLamboFrontLeftWheel.render(modelMatrixLamboChasis);
 		modelLamboFrontRightWheel.render(modelMatrixLamboChasis);
 		modelLamboRearLeftWheel.render(modelMatrixLamboChasis);
-		modelLamboRearRightWheel.render(modelMatrixLamboChasis);
+		modelLamboRearRightWheel.render(modelMatrixLamboChasis);*/
 		// Se regresa el cull faces IMPORTANTE para las puertas
+
+		// Lambo car
+		glDisable(GL_CULL_FACE);
+		glm::mat4 modelMatrixLamboChasis = glm::mat4(modelMatrixLambo);
+		modelMatrixLamboChasis = glm::scale(modelMatrixLamboChasis, glm::vec3(1.3, 1.3, 1.3));
+		modelMatrixLamboChasis[3][1]=
+		terrain.getHeightTerrain(modelMatrixLamboChasis[3][0],modelMatrixLamboChasis[3][2]);//hacer la interpolacion en base a la posicion x y z del modelo
+		//cambio con angulo de inclinacion
+		glm::vec3 ejeyLamboChasis=glm::normalize(
+			terrain.getNormalTerrain(modelMatrixLamboChasis[3][0],modelMatrixLamboChasis[3][2]));
+		glm::vec3 ejezLamboChasis=glm::normalize(modelMatrixLamboChasis[2]);
+		glm::vec3 ejexLamboChasis=glm::normalize(glm::cross(ejeyLamboChasis,ejezLamboChasis));
+		 ejezLamboChasis=glm::normalize(glm::cross(ejexLamboChasis,ejeyLamboChasis));
+		modelMatrixLamboChasis[0]=glm::vec4(ejexLamboChasis,0.0f);
+		modelMatrixLamboChasis[1]=glm::vec4(ejeyLamboChasis,0.0f);
+		modelMatrixLamboChasis[2]=glm::vec4(ejezLamboChasis,0.0f);
+		modelLambo.render(modelMatrixLamboChasis);
+		
+		glActiveTexture(GL_TEXTURE0);
+		glm::mat4 modelMatrixLamboLeftDor = glm::mat4(modelMatrixLamboChasis);
+		modelMatrixLamboLeftDor = glm::translate(modelMatrixLamboLeftDor, glm::vec3(1.08676, 0.707316, 0.982601));
+		modelMatrixLamboLeftDor = glm::rotate(modelMatrixLamboLeftDor, glm::radians(dorRotCount), glm::vec3(1.0, 0, 0));
+		modelMatrixLamboLeftDor = glm::translate(modelMatrixLamboLeftDor, glm::vec3(-1.08676, -0.707316, -0.982601));
+		modelLamboLeftDor.render(modelMatrixLamboLeftDor);
+
+		glm::mat4 modelMatrixLamboRightDor = glm::mat4(modelMatrixLamboChasis);
+		modelMatrixLamboRightDor = glm::translate(modelMatrixLamboRightDor, glm::vec3(-1.076, 0.6992, 0.9766));
+		modelMatrixLamboRightDor = glm::rotate(modelMatrixLamboRightDor, glm::radians(dorRotCount), glm::vec3(1.0, 0, 0));
+		modelMatrixLamboRightDor = glm::translate(modelMatrixLamboRightDor, glm::vec3(1.076, -0.6992, -0.9766));
+		modelLamboRightDor.render(modelMatrixLamboRightDor);
+
+
+		glm::mat4 modelMatrixLamboFrontLeftWheel = glm::mat4(modelMatrixLamboChasis);
+		modelMatrixLamboFrontLeftWheel[3][1]=
+		terrain.getHeightTerrain(modelMatrixLamboFrontLeftWheel[3][0],modelMatrixLamboFrontLeftWheel[3][2]);//hacer la interpolacion en base a la posicion x y z del modelo
+		//cambio con angulo de inclinacion
+		glm::vec3 ejeyLamboFrontLeftWheel=glm::normalize(
+			terrain.getNormalTerrain(modelMatrixLamboFrontLeftWheel[3][0],modelMatrixLamboFrontLeftWheel[3][2]));
+		glm::vec3 ejezLamboFrontLeftWheel=glm::normalize(modelMatrixLamboFrontLeftWheel[2]);
+		glm::vec3 ejexLamboFrontLeftWheel=glm::normalize(glm::cross(ejeyLamboFrontLeftWheel,ejezLamboFrontLeftWheel));
+		 ejezLamboFrontLeftWheel=glm::normalize(glm::cross(ejexLamboFrontLeftWheel,ejeyLamboFrontLeftWheel));
+		modelMatrixLamboFrontLeftWheel[0]=glm::vec4(ejexLamboFrontLeftWheel,0.0f);
+		modelMatrixLamboFrontLeftWheel[1]=glm::vec4(ejeyLamboFrontLeftWheel,0.0f);
+		modelMatrixLamboFrontLeftWheel[2]=glm::vec4(ejezLamboFrontLeftWheel,0.0f);
+
+		modelMatrixLamboFrontLeftWheel = glm::translate(modelMatrixLamboFrontLeftWheel, glm::vec3(0.0f,0.37f,1.4f));
+		modelMatrixLamboFrontLeftWheel = glm::rotate(modelMatrixLamboFrontLeftWheel, -rotWheelsY2, glm::vec3(0, 1, 0)); //giro en Y contrario al del Eclipse
+		modelMatrixLamboFrontLeftWheel = glm::rotate(modelMatrixLamboFrontLeftWheel, rotWheelsX2, glm::vec3(1, 0, 0));
+		modelMatrixLamboFrontLeftWheel = glm::translate(modelMatrixLamboFrontLeftWheel, glm::vec3(0.0, -0.37f, -1.4f));
+		modelLamboFrontLeftWheel.render(modelMatrixLamboFrontLeftWheel);
+		modelLamboFrontRightWheel.render(modelMatrixLamboFrontLeftWheel);
+		
+		glm::mat4 modelMatrixLamboRearLeftWheel = glm::mat4(modelMatrixLamboChasis);
+		modelMatrixLamboRearLeftWheel[3][1]=
+		terrain.getHeightTerrain(modelMatrixLamboRearLeftWheel[3][0],modelMatrixLamboRearLeftWheel[3][2]);//hacer la interpolacion en base a la posicion x y z del modelo
+		//cambio con angulo de inclinacion
+		glm::vec3 ejeyLamboRearLeftWheel=glm::normalize(
+			terrain.getNormalTerrain(modelMatrixLamboRearLeftWheel[3][0],modelMatrixLamboRearLeftWheel[3][2]));
+		glm::vec3 ejezLamboRearLeftWheel=glm::normalize(modelMatrixLamboRearLeftWheel[2]);
+		glm::vec3 ejexLamboRearLeftWheel=glm::normalize(glm::cross(ejeyLamboRearLeftWheel,ejezLamboRearLeftWheel));
+		 ejezLamboRearLeftWheel=glm::normalize(glm::cross(ejexLamboRearLeftWheel,ejeyLamboRearLeftWheel));
+		modelMatrixLamboRearLeftWheel[0]=glm::vec4(ejexLamboRearLeftWheel,0.0f);
+		modelMatrixLamboRearLeftWheel[1]=glm::vec4(ejeyLamboRearLeftWheel,0.0f);
+		modelMatrixLamboRearLeftWheel[2]=glm::vec4(ejezLamboRearLeftWheel,0.0f);
+
+
+		modelMatrixLamboRearLeftWheel = glm::translate(modelMatrixLamboRearLeftWheel, glm::vec3(0.0f,0.397f,-1.598f));
+		modelMatrixLamboRearLeftWheel = glm::rotate(modelMatrixLamboRearLeftWheel, rotWheelsX2, glm::vec3(1, 0, 0));
+		modelMatrixLamboRearLeftWheel = glm::translate(modelMatrixLamboRearLeftWheel, glm::vec3(0.0, -0.397f, 1.598f));
+		modelLamboRearLeftWheel.render(modelMatrixLamboRearLeftWheel);
+		modelLamboRearRightWheel.render(modelMatrixLamboRearLeftWheel);
 		glEnable(GL_CULL_FACE);
 
 		//Render lamp1
@@ -1345,6 +1711,32 @@ void applicationLoop() {
 		mayowModelAnimate.setAnimationIndex(animationMayowIndex);
 		mayowModelAnimate.render(modelMatrixMayowBody);
 		animationMayowIndex = 1;
+
+		//cyborg p2
+		modelMatrixCyborg2[3][1]=
+		terrain.getHeightTerrain(modelMatrixCyborg2[3][0],modelMatrixCyborg2[3][2]);//hacer la interpolacion en base a la posicion x y z del modelo
+		//cambio con angulo de inclinacion
+		glm::vec3 ejey2=glm::normalize(
+			terrain.getNormalTerrain(modelMatrixCyborg2[3][0],modelMatrixCyborg2[3][2]));
+		glm::vec3 ejez2=glm::normalize(modelMatrixCyborg2[2]);
+		glm::vec3 ejex2=glm::normalize(glm::cross(ejey2,ejez2));
+		 ejez=glm::normalize(glm::cross(ejex,ejey));
+		modelMatrixCyborg2[0]=glm::vec4(ejex2,0.0f);
+		modelMatrixCyborg2[1]=glm::vec4(ejey2,0.0f);
+		modelMatrixCyborg2[2]=glm::vec4(ejez2,0.0f);
+
+		glm::mat4 modelMatrixCyborgBody2 = glm::mat4(modelMatrixCyborg2);
+		modelMatrixCyborgBody2 = glm::scale(modelMatrixCyborgBody2, glm::vec3(0.01, 0.01, 0.01));
+		cyborgAnimate.setAnimationIndex(mueve);
+		cyborgAnimate.render(modelMatrixCyborgBody2);
+		mueve = 1;
+
+		modelMatrixChicaRosa[3][1] = terrain.getHeightTerrain(modelMatrixChicaRosa[3][0], modelMatrixChicaRosa[3][2]);
+		glm::mat4 modelMatrixChicaRosaBody = glm::mat4(modelMatrixChicaRosa);
+		modelMatrixChicaRosaBody = glm::scale(modelMatrixChicaRosaBody, glm::vec3(0.009f));
+		modelChicaRosaAnimate.render(modelMatrixChicaRosaBody);
+
+	
 
 		modelMatrixCowboy[3][1] = terrain.getHeightTerrain(modelMatrixCowboy[3][0], modelMatrixCowboy[3][2]);
 		glm::mat4 modelMatrixCowboyBody = glm::mat4(modelMatrixCowboy);
@@ -1534,7 +1926,7 @@ void applicationLoop() {
 		}
 
 		// Maquina de estado de lambo
-		switch (stateDoor)
+		/*switch (stateDoor)
 		{
 		case 0:
 			dorRotCount += 0.5;
@@ -1550,7 +1942,55 @@ void applicationLoop() {
 		
 		default:
 			break;
+		}*/
+		//Maquina de estado de Auto Lambo
+		switch(state2){  
+			case 0:
+				if(numberAdvance2 == 0)
+					maxAdvance2 = 5.0f;
+				else if(numberAdvance2 == 1)
+					maxAdvance2 = 40.0f;
+				else if(numberAdvance2 == 2)
+					maxAdvance2 = 36.0f;
+				else if(numberAdvance2 == 3)
+					maxAdvance2 = 40.0f;
+				else if(numberAdvance2 == 4)
+					maxAdvance2 = 36.0f;
+				state2 = 1;
+				break;
+
+			case 1:
+				modelMatrixLambo = glm::translate(modelMatrixLambo,glm::vec3(0.0f, 0.0f,0.2f));
+				advanceCount2 += 0.2f;
+				rotWheelsX2 += 0.05f;
+				rotWheelsY2 -= 0.02f;
+				if(rotWheelsY2 < 0.0f)
+					rotWheelsY2 = 0.0f;
+				if(advanceCount2> maxAdvance2){
+					advanceCount2 = 0;
+					numberAdvance2++;
+					state2 = 2;					
+				}
+			 	break;
+			case 2:
+				modelMatrixLambo = glm::translate(modelMatrixLambo, glm::vec3(0.0f,0.0f,0.025f)); //para gira de llantas en eje Y
+				modelMatrixLambo = glm::rotate(modelMatrixLambo, glm::radians(-0.5f),glm::vec3(0.0f,1.0f,0.0f)); //+
+				rotCount2 -= 0.5f; //+
+				rotWheelsX2 += 0.05f;
+				rotWheelsY2 += 0.02f; //+
+				if(rotWheelsY2 > 0.24f)    //*****
+					rotWheelsY2 = 0.24f;
+				if(rotCount2 <= -90.0f){
+					rotCount2 = 0;
+					state2 = 0;
+					if(numberAdvance2 > 4)
+						numberAdvance2 = 1;
+				}	
+				break;
 		}
+
+
+
 
 		// Constantes de animaciones
 		rotHelHelY += 0.5;
