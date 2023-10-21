@@ -216,6 +216,12 @@ std::vector<float> lamp2Orientation = {
 double deltaTime;
 double currTime, lastTime;
 
+// Variables para el salto
+bool isJump = false;
+float GRAVITY = 1.81;
+double tmv = 0.0;
+double startTimeJump = 0.0;
+
 // Variables animacion maquina de estados eclipse
 const float avance = 0.1;
 const float giroEclipse = 0.5f;
@@ -285,7 +291,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
-	// Inicialización de los shaders
+	// InicializaciÃ³n de los shaders
 	shader.initialize("../Shaders/colorShader.vs", "../Shaders/colorShader.fs");
 	shaderSkybox.initialize("../Shaders/skyBox.vs", "../Shaders/skyBox.fs");
 	shaderMulLighting.initialize("../Shaders/iluminacion_textura_animation.vs", "../Shaders/multipleLights.fs");
@@ -558,7 +564,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	glBindTexture(GL_TEXTURE_2D, textureLandingPadID); // Se enlaza la textura
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // Wrapping en el eje u
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // Wrapping en el eje v
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filtering de minimización
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filtering de minimizaciÃ³n
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // Filtering de maximimizacion
 	if(textureLandingPad.getData()){
 		// Transferir los datos de la imagen a la tarjeta
@@ -578,7 +584,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	glBindTexture(GL_TEXTURE_2D, textureTerrainRID); // Se enlaza la textura
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // Wrapping en el eje u
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // Wrapping en el eje v
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filtering de minimización
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filtering de minimizaciÃ³n
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // Filtering de maximimizacion
 	if(textureR.getData()){
 		// Transferir los datos de la imagen a la tarjeta
@@ -597,7 +603,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	glBindTexture(GL_TEXTURE_2D, textureTerrainGID); // Se enlaza la textura
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // Wrapping en el eje u
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // Wrapping en el eje v
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filtering de minimización
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filtering de minimizaciÃ³n
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // Filtering de maximimizacion
 	if(textureG.getData()){
 		// Transferir los datos de la imagen a la tarjeta
@@ -616,7 +622,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	glBindTexture(GL_TEXTURE_2D, textureTerrainBID); // Se enlaza la textura
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // Wrapping en el eje u
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // Wrapping en el eje v
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filtering de minimización
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filtering de minimizaciÃ³n
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // Filtering de maximimizacion
 	if(textureB.getData()){
 		// Transferir los datos de la imagen a la tarjeta
@@ -635,7 +641,7 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	glBindTexture(GL_TEXTURE_2D, textureTerrainBlendMapID); // Se enlaza la textura
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // Wrapping en el eje u
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // Wrapping en el eje v
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filtering de minimización
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); // Filtering de minimizaciÃ³n
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); // Filtering de maximimizacion
 	if(textureBlendMap.getData()){
 		// Transferir los datos de la imagen a la tarjeta
@@ -933,6 +939,14 @@ bool processInput(bool continueApplication) {
 	else if (modelSelected == 0 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
 		modelMatrixMayow = glm::translate(modelMatrixMayow, glm::vec3(0.0, 0.0, -0.02));
 		animationMayowIndex = 0;
+	}
+
+	bool statusKeySpace = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
+	if(!isJump && statusKeySpace){
+		std::cout << "Saltando" << std::endl;
+		startTimeJump = currTime;
+		tmv = 0;
+		isJump = true;
 	}
 
 	glfwPollEvents();
@@ -1347,7 +1361,16 @@ void applicationLoop() {
 		modelMatrixMayow[0] = glm::vec4(ejex, 0.0);
 		modelMatrixMayow[1] = glm::vec4(ejey, 0.0);
 		modelMatrixMayow[2] = glm::vec4(ejez, 0.0);
-		modelMatrixMayow[3][1] = terrain.getHeightTerrain(modelMatrixMayow[3][0], modelMatrixMayow[3][2]);
+		float alturaActual = 
+			terrain.getHeightTerrain(modelMatrixMayow[3][0], modelMatrixMayow[3][2]);
+		modelMatrixMayow[3][1] = -GRAVITY * tmv * tmv + 3.1 * tmv + alturaActual;
+		tmv = currTime - startTimeJump;
+		if(modelMatrixMayow[3][1] < alturaActual){
+			isJump = false;
+			modelMatrixMayow[3][1] = alturaActual;
+		}
+
+		//modelMatrixMayow[3][1] = terrain.getHeightTerrain(modelMatrixMayow[3][0], modelMatrixMayow[3][2]);
 		glm::mat4 modelMatrixMayowBody = glm::mat4(modelMatrixMayow);
 		modelMatrixMayowBody = glm::scale(modelMatrixMayowBody, glm::vec3(0.021f));
 		mayowModelAnimate.setAnimationIndex(animationMayowIndex);
