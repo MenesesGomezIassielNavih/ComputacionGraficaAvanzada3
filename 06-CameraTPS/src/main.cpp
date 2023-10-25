@@ -108,12 +108,21 @@ Model cowboyModelAnimate;
 Model guardianModelAnimate;
 // Cybog
 Model cyborgModelAnimate;
+
+//Luffy
+Model luffyModelAnimate;
+
+//Mixamo 1 modelo estatica
+Model modelChicaRosaAnimate;
+
 // Terrain model instance
-Terrain terrain(-1, -1, 200, 8, "../Textures/heightmap.png");
+//Terrain terrain(-1, -1, 200, 8, "../Textures/heightmap.png");
+Terrain terrain(-1.0f,-1.0f,200.0f,8.0f,"../Textures/Terrain2024-1.png");
 
 GLuint textureCespedID, textureWallID, textureWindowID, textureHighwayID, textureLandingPadID;
 GLuint textureTerrainRID, textureTerrainGID, textureTerrainBID, textureTerrainBlendMapID;
 GLuint skyboxTextureID;
+GLuint textureNieveID, textureCaminoID, textureTierraID, textureFloresID;
 
 GLenum types[6] = {
 GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -146,8 +155,11 @@ glm::mat4 modelMatrixMayow = glm::mat4(1.0f);
 glm::mat4 modelMatrixCowboy = glm::mat4(1.0f);
 glm::mat4 modelMatrixGuardian = glm::mat4(1.0f);
 glm::mat4 modelMatrixCyborg = glm::mat4(1.0f);
+glm::mat4 modelMatrixLuffy = glm::mat4(1.0f);
+glm::mat4 modelMatrixChicaRosa = glm::mat4(1.0f); 
 
 int animationMayowIndex = 1;
+int animationLuffyIndex = 1;
 float rotDartHead = 0.0, rotDartLeftArm = 0.0, rotDartLeftHand = 0.0, rotDartRightArm = 0.0, rotDartRightHand = 0.0, rotDartLeftLeg = 0.0, rotDartRightLeg = 0.0;
 float rotBuzzHead = 0.0, rotBuzzLeftarm = 0.0, rotBuzzLeftForeArm = 0.0, rotBuzzLeftHand = 0.0;
 int modelSelected = 0;
@@ -402,6 +414,14 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	cyborgModelAnimate.loadModel("../models/cyborg/cyborg.fbx");
 	cyborgModelAnimate.setShader(&shaderMulLighting);
 
+	//Luffy
+	luffyModelAnimate.loadModel("../models/Luffy/esperar_correr_1.fbx");
+	luffyModelAnimate.setShader(&shaderMulLighting);
+
+	//Mixamo 1
+	modelChicaRosaAnimate.loadModel("../models/mona/caminando7.fbx");
+	modelChicaRosaAnimate.setShader(&shaderMulLighting);
+
 	// Terreno
 	terrain.init();
 	terrain.setShader(&shaderTerrain);
@@ -647,6 +667,137 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 		std::cout << "Fallo la carga de textura" << std::endl;
 	textureBlendMap.freeImage(); // Liberamos memoria
 
+	// Definiendo la Textura a utilizar
+	Texture textureNieve("../Textures/Texture_Set_Vol_24_Snow_PNG/Vol_24_5_Base_Color.png");
+	//cargando el mapa de BITS
+	textureNieve.loadImage();
+	// Creando la textura con id 1
+	glGenTextures(1, &textureNieveID);
+	// Enlazar esa textura a una tipo de textura de 2D.
+	glBindTexture(GL_TEXTURE_2D, textureNieveID);
+
+	// configurando  the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// configurando texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Verifica si se pudo abrir la textura
+	
+	// Verifica si se pudo abrir la textura
+	if (textureNieve.getData()) {
+		// Transferis los datos de la imagen a memoria
+		// Tipo de textura, Mipmaps, Formato interno de openGL, ancho, alto, Mipmaps,
+		// Formato interno de la libreria de la imagen, el tipo de dato y al apuntador
+		// a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, textureNieve.getChannels() == 3 ? GL_RGB : GL_RGBA, textureNieve.getWidth(), textureNieve.getHeight(), 0,
+		textureNieve.getChannels() == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, textureNieve.getData());
+		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	textureNieve.freeImage();
+
+
+	// Definiendo la Textura a utilizar
+	Texture textureCamino("../Textures/PBR_Road_textures/V_01/Road_v01_2_BaseColor.png");
+	//cargando el mapa de BITS
+	textureCamino.loadImage();
+	// Creando la textura con id 1
+	glGenTextures(1, &textureCaminoID);
+	// Enlazar esa textura a una tipo de textura de 2D.
+	glBindTexture(GL_TEXTURE_2D, textureCaminoID);
+
+	// configurando  the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// configurando texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Verifica si se pudo abrir la textura
+	
+	// Verifica si se pudo abrir la textura
+	if (textureCamino.getData()) {
+		// Transferis los datos de la imagen a memoria
+		// Tipo de textura, Mipmaps, Formato interno de openGL, ancho, alto, Mipmaps,
+		// Formato interno de la libreria de la imagen, el tipo de dato y al apuntador
+		// a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, textureCamino.getChannels() == 3 ? GL_RGB : GL_RGBA, textureCamino.getWidth(), textureCamino.getHeight(), 0,
+		textureCamino.getChannels() == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, textureCamino.getData());
+		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	textureCamino.freeImage();
+
+
+	// Definiendo la Textura a utilizar
+	Texture textureTierra("../Textures/PBR_GroundGravel_textures/V_03/GroundGravel_BaseColor_v03.png");
+	//cargando el mapa de BITS
+	textureTierra.loadImage();
+	// Creando la textura con id 1
+	glGenTextures(1, &textureTierraID);
+	// Enlazar esa textura a una tipo de textura de 2D.
+	glBindTexture(GL_TEXTURE_2D, textureTierraID);
+
+	// configurando  the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// configurando texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Verifica si se pudo abrir la textura
+	
+	// Verifica si se pudo abrir la textura
+	if (textureTierra.getData()) {
+		// Transferis los datos de la imagen a memoria
+		// Tipo de textura, Mipmaps, Formato interno de openGL, ancho, alto, Mipmaps,
+		// Formato interno de la libreria de la imagen, el tipo de dato y al apuntador
+		// a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, textureTierra.getChannels() == 3 ? GL_RGB : GL_RGBA, textureTierra.getWidth(), textureTierra.getHeight(), 0,
+		textureTierra.getChannels() == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, textureTierra.getData());
+		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	textureTierra.freeImage();
+
+
+	// Definiendo la Textura a utilizar
+	Texture textureFlores("../Textures/Texture_Set_Vol_64_Grass_png/Vol_64_3_Base_Color.png");
+	//cargando el mapa de BITS
+	textureFlores.loadImage();
+	// Creando la textura con id 1
+	glGenTextures(1, &textureFloresID);
+	// Enlazar esa textura a una tipo de textura de 2D.
+	glBindTexture(GL_TEXTURE_2D, textureFloresID);
+
+	// configurando  the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// configurando texture filtering parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Verifica si se pudo abrir la textura
+	
+	// Verifica si se pudo abrir la textura
+	if (textureFlores.getData()) {
+		// Transferis los datos de la imagen a memoria
+		// Tipo de textura, Mipmaps, Formato interno de openGL, ancho, alto, Mipmaps,
+		// Formato interno de la libreria de la imagen, el tipo de dato y al apuntador
+		// a los datos
+		glTexImage2D(GL_TEXTURE_2D, 0, textureFlores.getChannels() == 3 ? GL_RGB : GL_RGBA, textureFlores.getWidth(), textureFlores.getHeight(), 0,
+		textureFlores.getChannels() == 3 ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, textureFlores.getData());
+		// Generan los niveles del mipmap (OpenGL es el ecargado de realizarlos)
+		glGenerateMipmap(GL_TEXTURE_2D);
+	} else
+		std::cout << "Failed to load texture" << std::endl;
+	// Libera la memoria de la textura
+	textureFlores.freeImage();
+
 }
 
 void destroy() {
@@ -706,6 +857,10 @@ void destroy() {
 	cowboyModelAnimate.destroy();
 	guardianModelAnimate.destroy();
 	cyborgModelAnimate.destroy();
+	//p6
+	luffyModelAnimate.destroy();
+	//mixamo 1
+	modelChicaRosaAnimate.destroy();
 
 	// Terrains objects Delete
 	terrain.destroy();
@@ -721,6 +876,10 @@ void destroy() {
 	glDeleteTextures(1, &textureTerrainGID);
 	glDeleteTextures(1, &textureTerrainRID);
 	glDeleteTextures(1, &textureTerrainBlendMapID);
+	glDeleteTextures(1, &textureNieveID);
+	glDeleteTextures(1, &textureCaminoID);
+	glDeleteTextures(1, &textureTierraID);
+	glDeleteTextures(1, &textureFloresID);
 
 	// Cube Maps Delete
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
@@ -804,7 +963,7 @@ bool processInput(bool continueApplication) {
 	if (enableCountSelected && glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS){
 		enableCountSelected = false;
 		modelSelected++;
-		if(modelSelected > 4)
+		if(modelSelected > 5)
 			modelSelected = 0;
 		if(modelSelected == 1)
 			fileName = "../animaciones/animation_dart_joints.txt";
@@ -949,6 +1108,27 @@ bool processInput(bool continueApplication) {
 		animationMayowIndex = 0;
 	}
 
+	//Luffy
+	if (modelSelected == 5 && glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
+		modelMatrixLuffy = glm::rotate(modelMatrixLuffy, 0.02f, glm::vec3(0, 1, 0));
+		animationLuffyIndex = 4;
+		
+	} else if (modelSelected == 5 && glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
+		modelMatrixLuffy = glm::rotate(modelMatrixLuffy, -0.02f, glm::vec3(0, 1, 0));
+		animationLuffyIndex = 4;
+		
+	}
+	if (modelSelected == 5 && glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
+		modelMatrixLuffy = glm::translate(modelMatrixLuffy, glm::vec3(0.0, 0.0, 0.02));
+		animationLuffyIndex = 4;
+		
+	}
+	else if (modelSelected == 5 && glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
+		modelMatrixLuffy = glm::translate(modelMatrixLuffy, glm::vec3(0.0, 0.0, -0.02));
+		animationLuffyIndex = 4;
+		
+	}
+
 	glfwPollEvents();
 	return continueApplication;
 }
@@ -959,6 +1139,10 @@ void applicationLoop() {
 	float angleTarget;
 	glm::vec3 axis;
 	glm::vec3 target;
+	
+	float angleTarget2;
+	glm::vec3 axis2;
+	glm::vec3 target2;
 
 	modelMatrixEclipse = glm::translate(modelMatrixEclipse, glm::vec3(27.5, 0, 30.0));
 	modelMatrixEclipse = glm::rotate(modelMatrixEclipse, glm::radians(180.0f), glm::vec3(0, 1, 0));
@@ -991,6 +1175,10 @@ void applicationLoop() {
 	modelMatrixGuardian = glm::rotate(modelMatrixGuardian, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
 
 	modelMatrixCyborg = glm::translate(modelMatrixCyborg, glm::vec3(5.0f, 0.05, 0.0f));
+
+	modelMatrixLuffy = glm::translate(modelMatrixLuffy, glm::vec3(-2.0f, 0.7, -3.0f));
+
+	modelMatrixChicaRosa = glm::translate(modelMatrixChicaRosa, glm::vec3(-1.0f, 0.7, -7.0f));
 
 	// Variables to interpolation key frames
 	fileName = "../animaciones/animation_dart_joints.txt";
@@ -1027,6 +1215,12 @@ void applicationLoop() {
 			angleTarget = glm::angle(glm::quat_cast(modelMatrixDart));
 			axis = glm::axis(glm::quat_cast(modelMatrixDart)); 
 		}
+		else if(modelSelected ==5){
+			target = modelMatrixLuffy[3];
+			angleTarget =  glm::angle(glm::quat_cast(modelMatrixLuffy));
+			axis = glm::axis(glm::quat_cast(modelMatrixLuffy));
+
+		}
 		else{
 			target = modelMatrixMayow[3];
 			angleTarget = glm::angle(glm::quat_cast(modelMatrixMayow));
@@ -1043,6 +1237,7 @@ void applicationLoop() {
 		camera->setCameraTarget(target);
 		camera->updateCamera();
 		glm::mat4 view = camera->getViewMatrix();
+
 
 		// Settea la matriz de vista y projection al shader con solo color
 		shader.setMatrix4("projection", 1, false, glm::value_ptr(projection));
@@ -1160,7 +1355,7 @@ void applicationLoop() {
 		 * Terrain Cesped
 		 *******************************************/
 		// Se activa la textura del agua
-		glActiveTexture(GL_TEXTURE0);
+	/*	glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureCespedID);
 		shaderTerrain.setInt("backgroundTexture", 0);
 		glActiveTexture(GL_TEXTURE1);
@@ -1175,6 +1370,35 @@ void applicationLoop() {
 		glActiveTexture(GL_TEXTURE4);
 		glBindTexture(GL_TEXTURE_2D, textureTerrainBlendMapID);
 		shaderTerrain.setInt("blendMapTexture", 4);
+		shaderTerrain.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(80, 80)));
+		terrain.setPosition(glm::vec3(100, 0, 100));
+		terrain.render();
+		shaderTerrain.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(0, 0)));
+		glBindTexture(GL_TEXTURE_2D, 0);
+		*/
+		/*******************************************
+		 * Terrain Cesped 2
+		 *******************************************/
+		// Se activa la textura del agua
+		glActiveTexture(GL_TEXTURE0);
+	//	glBindTexture(GL_TEXTURE_2D, textureCespedID);
+		glBindTexture(GL_TEXTURE_2D, textureFloresID);
+		shaderTerrain.setInt("backgroundTexture", 0);
+		glActiveTexture(GL_TEXTURE1);
+	//	glBindTexture(GL_TEXTURE_2D, textureRID);
+		glBindTexture(GL_TEXTURE_2D, textureTierraID);
+		shaderTerrain.setInt("textureR", 1);
+		glActiveTexture(GL_TEXTURE2);
+	//	glBindTexture(GL_TEXTURE_2D, textureGID);
+		glBindTexture(GL_TEXTURE_2D, textureNieveID);
+		shaderTerrain.setInt("textureG", 2);
+		glActiveTexture(GL_TEXTURE3);
+	//	glBindTexture(GL_TEXTURE_2D, textureBID);
+		glBindTexture(GL_TEXTURE_2D, textureCaminoID);
+		shaderTerrain.setInt("textureB", 3);
+		glActiveTexture(GL_TEXTURE4);
+		glBindTexture(GL_TEXTURE_2D, textureTerrainBlendMapID);
+		shaderTerrain.setInt("textureBlendMap", 4);
 		shaderTerrain.setVectorFloat2("scaleUV", glm::value_ptr(glm::vec2(80, 80)));
 		terrain.setPosition(glm::vec3(100, 0, 100));
 		terrain.render();
@@ -1367,6 +1591,31 @@ void applicationLoop() {
 		mayowModelAnimate.setAnimationIndex(animationMayowIndex);
 		mayowModelAnimate.render(modelMatrixMayowBody);
 		animationMayowIndex = 1;
+
+
+		//Luffy
+		glm::vec3 ejey2 = glm::normalize(terrain.getNormalTerrain(modelMatrixLuffy[3][0], modelMatrixLuffy[3][2]));
+		glm::vec3 ejex2 = glm::vec3(modelMatrixLuffy[0]);
+		glm::vec3 ejez2 = glm::normalize(glm::cross(ejex2, ejey2));
+		ejex2 = glm::normalize(glm::cross(ejey2, ejez2));
+		modelMatrixLuffy[0] = glm::vec4(ejex2, 0.0);
+		modelMatrixLuffy[1] = glm::vec4(ejey2, 0.0);
+		modelMatrixLuffy[2] = glm::vec4(ejez2, 0.0);
+		modelMatrixLuffy[3][1] = terrain.getHeightTerrain(modelMatrixLuffy[3][0], modelMatrixLuffy[3][2]);
+		glm::mat4 modelMatrixLuffyBody = glm::mat4(modelMatrixLuffy);
+		modelMatrixLuffyBody = glm::scale(modelMatrixLuffyBody, glm::vec3(0.009f));
+		luffyModelAnimate.setAnimationIndex(animationLuffyIndex);
+		luffyModelAnimate.render(modelMatrixLuffyBody);
+		animationLuffyIndex = 1;
+
+
+		
+		modelMatrixChicaRosa[3][1] = terrain.getHeightTerrain(modelMatrixChicaRosa[3][0], modelMatrixChicaRosa[3][2]);
+		glm::mat4 modelMatrixChicaRosaBody = glm::mat4(modelMatrixChicaRosa);
+		modelMatrixChicaRosaBody = glm::rotate(modelMatrixChicaRosaBody, glm::radians(90.0f), glm::vec3(0, 1, 0));
+		modelMatrixChicaRosaBody = glm::scale(modelMatrixChicaRosaBody, glm::vec3(0.006f));
+		modelChicaRosaAnimate.render(modelMatrixChicaRosaBody);
+
 
 		modelMatrixCowboy[3][1] = terrain.getHeightTerrain(modelMatrixCowboy[3][0], modelMatrixCowboy[3][2]);
 		glm::mat4 modelMatrixCowboyBody = glm::mat4(modelMatrixCowboy);

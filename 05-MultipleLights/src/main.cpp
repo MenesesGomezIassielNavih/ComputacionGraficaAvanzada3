@@ -1134,6 +1134,7 @@ bool processInput(bool continueApplication) {
 		modelMatrixMayow = glm::translate(modelMatrixMayow, glm::vec3(0.0, 0.0, -0.02));
 		animationMayowIndex = 0;
 	}
+	
 
 	//movi de cyborg
 	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS){
