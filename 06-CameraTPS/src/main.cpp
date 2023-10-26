@@ -52,9 +52,10 @@ Shader shaderSkybox;
 Shader shaderMulLighting;
 //Shader para el terreno
 Shader shaderTerrain;
-
-std::shared_ptr<Camera> camera(new ThirdPersonCamera());
+std::shared_ptr<FirstPersonCamera> camera1(new FirstPersonCamera());
+std::shared_ptr<ThirdPersonCamera> camera3(new ThirdPersonCamera());
 float distanceFromTarget = 7.0;
+glm::mat4 view;
 
 Sphere skyboxSphere(20, 20);
 Box boxCesped;
@@ -143,6 +144,9 @@ bool exitApp = false;
 int lastMousePosX, offsetX = 0;
 int lastMousePosY, offsetY = 0;
 
+bool isThirdCamera=true, changingCamera = false;
+
+
 // Model matrix definitions
 glm::mat4 modelMatrixEclipse = glm::mat4(1.0f);
 glm::mat4 matrixModelRock = glm::mat4(1.0);
@@ -159,7 +163,7 @@ glm::mat4 modelMatrixLuffy = glm::mat4(1.0f);
 glm::mat4 modelMatrixChicaRosa = glm::mat4(1.0f); 
 
 int animationMayowIndex = 1;
-int animationLuffyIndex = 1;
+int animationLuffyIndex = 5;
 float rotDartHead = 0.0, rotDartLeftArm = 0.0, rotDartLeftHand = 0.0, rotDartRightArm = 0.0, rotDartRightHand = 0.0, rotDartLeftLeg = 0.0, rotDartRightLeg = 0.0;
 float rotBuzzHead = 0.0, rotBuzzLeftarm = 0.0, rotBuzzLeftForeArm = 0.0, rotBuzzLeftHand = 0.0;
 int modelSelected = 0;
@@ -426,11 +430,16 @@ void init(int width, int height, std::string strTitle, bool bFullScreen) {
 	terrain.init();
 	terrain.setShader(&shaderTerrain);
 
-	//para camara tercera persona no se ocupa
-	camera->setPosition(glm::vec3(0.0, 3.0, 4.0));
-	camera->setSensitivity(1.0f);
-	camera->setDistanceFromTarget(distanceFromTarget);
-
+	if(isThirdCamera==true)
+	{
+		camera3->setPosition(glm::vec3(0.0,0.0, 10.0));
+		camera3->setDistanceFromTarget(distanceFromTarget);
+		camera3->setSensitivity(1.0);
+	} else
+	{
+		camera1->setPosition(camera3->getPosition());
+		
+	}
 	
 	// Carga de texturas para el skybox
 	Texture skyboxTexture = Texture("");
@@ -913,7 +922,7 @@ void mouseCallback(GLFWwindow *window, double xpos, double ypos) {
 
 void scrollCallback(GLFWwindow *window, double xoffset, double yoffset){
 	distanceFromTarget -= yoffset;
-	camera->setDistanceFromTarget(distanceFromTarget);
+	camera3->setDistanceFromTarget(distanceFromTarget);
 
 }
 
@@ -940,20 +949,51 @@ bool processInput(bool continueApplication) {
 		return false;
 	}
 
-	/*if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera->moveFrontCamera(true, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera->moveFrontCamera(false, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera->moveRightCamera(false, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera->moveRightCamera(true, deltaTime);
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-		camera->mouseMoveCamera(offsetX, offsetY, deltaTime);*/
-	if(glfwGetMouseButton (window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-		camera->mouseMoveCamera(offsetX, 0, deltaTime);
-	if(glfwGetMouseButton (window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-		camera->mouseMoveCamera(offsetY, 0, deltaTime);
+if (isThirdCamera)
+	{
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+			camera3->mouseMoveCamera(offsetX, offsetY, deltaTime);
+		if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+		camera3->mouseMoveCamera(0.0, offsetY, deltaTime);
+	}
+	else
+	{
+		
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+			camera1->moveFrontCamera(true, deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+			camera1->moveFrontCamera(false, deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+			camera1->moveRightCamera(false, deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+			camera1->moveRightCamera(true, deltaTime);
+		if(glfwGetMouseButton(window,GLFW_MOUSE_BUTTON_LEFT)== GLFW_PRESS)
+			camera1->mouseMoveCamera(offsetX, offsetY, deltaTime);
+		
+	}
+
+	
+
+
+if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)==GLFW_PRESS )
+	{
+		if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
+		{
+			changingCamera = true;
+			camera1->setPosition(glm::vec3(camera3->getPosition()));
+		}
+		if (glfwGetKey(window, GLFW_KEY_K) == GLFW_RELEASE)
+		{
+			if (changingCamera)
+			{
+				isThirdCamera = !isThirdCamera;
+				std::cout << "Changed Camera" << std::endl;
+			}
+			changingCamera = false;
+		}
+		
+	}
+
 	offsetX = 0;
 	offsetY = 0;
 
@@ -1233,10 +1273,19 @@ void applicationLoop() {
 		if(modelSelected == 1)
 			angleTarget -=  glm::radians(90.0f);
 
-		camera->setAngleTarget(angleTarget);
-		camera->setCameraTarget(target);
-		camera->updateCamera();
-		glm::mat4 view = camera->getViewMatrix();
+
+		if (isThirdCamera)
+		{
+			camera3->setAngleTarget(angleTarget);
+			camera3->setCameraTarget(target);
+			camera3->updateCamera();
+			view = camera3->getViewMatrix();
+		}
+		else
+		{
+			
+			view = camera1->getViewMatrix();
+		}
 
 
 		// Settea la matriz de vista y projection al shader con solo color
@@ -1262,14 +1311,14 @@ void applicationLoop() {
 		/*******************************************
 		 * Propiedades Luz direccional
 		 *******************************************/
-		shaderMulLighting.setVectorFloat3("viewPos", glm::value_ptr(camera->getPosition()));
-		shaderMulLighting.setVectorFloat3("directionalLight.light.ambient", glm::value_ptr(glm::vec3(0.2, 0.2, 0.2)));
+		shaderMulLighting.setVectorFloat3("viewPos", glm::value_ptr(camera3->getPosition()));
+		shaderMulLighting.setVectorFloat3("directionalLight.light.ambient", glm::value_ptr(glm::vec3(0.4, 0.4, 0.4)));
 		shaderMulLighting.setVectorFloat3("directionalLight.light.diffuse", glm::value_ptr(glm::vec3(0.3, 0.3, 0.3)));
 		shaderMulLighting.setVectorFloat3("directionalLight.light.specular", glm::value_ptr(glm::vec3(0.4, 0.4, 0.4)));
 		shaderMulLighting.setVectorFloat3("directionalLight.direction", glm::value_ptr(glm::vec3(-1.0, 0.0, 0.0)));
 
-		shaderTerrain.setVectorFloat3("viewPos", glm::value_ptr(camera->getPosition()));
-		shaderTerrain.setVectorFloat3("directionalLight.light.ambient", glm::value_ptr(glm::vec3(0.2, 0.2, 0.2)));
+		shaderTerrain.setVectorFloat3("viewPos", glm::value_ptr(camera3->getPosition()));
+		shaderTerrain.setVectorFloat3("directionalLight.light.ambient", glm::value_ptr(glm::vec3(0.4, 0.4, 0.4)));
 		shaderTerrain.setVectorFloat3("directionalLight.light.diffuse", glm::value_ptr(glm::vec3(0.3, 0.3, 0.3)));
 		shaderTerrain.setVectorFloat3("directionalLight.light.specular", glm::value_ptr(glm::vec3(0.4, 0.4, 0.4)));
 		shaderTerrain.setVectorFloat3("directionalLight.direction", glm::value_ptr(glm::vec3(-1.0, 0.0, 0.0)));
@@ -1606,7 +1655,7 @@ void applicationLoop() {
 		modelMatrixLuffyBody = glm::scale(modelMatrixLuffyBody, glm::vec3(0.009f));
 		luffyModelAnimate.setAnimationIndex(animationLuffyIndex);
 		luffyModelAnimate.render(modelMatrixLuffyBody);
-		animationLuffyIndex = 1;
+		animationLuffyIndex = 5;
 
 
 		
