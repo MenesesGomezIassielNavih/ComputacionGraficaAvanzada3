@@ -297,9 +297,13 @@ double currTime, lastTime;
 
 // Jump variables
 bool isJump = false;
+bool isPunch = false;
 float GRAVITY = 1.81;
 double tmv = 0;
+double tmv2 = 0;
 double startTimeJump = 0;
+double startTimePunch = 0;
+
 
 float maxDistanceRay=10.0;//variable que contiene el tamano del rayo
 
@@ -1120,22 +1124,35 @@ if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)==GLFW_PRESS )
 	}
 
 	if (modelSelected == 5 && glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS){
-		animationCyborgIndex = golpe;
+		//animationCyborgIndex = golpe;
+		isPunch= true;	
 		golpe1 = 20.0f;
 	}
 	else if (modelSelected == 5 && glfwGetKey(window, GLFW_KEY_G) == GLFW_RELEASE){
 		golpe1 = 0.0f;
 	}
 
+	if(isPunch==true){
+		animationCyborgIndex = golpe;
+		startTimePunch += 1;
+		if(startTimePunch > 45){
+			isPunch= false;
+			startTimePunch=0;
+		}
+	}
+
+
 	bool keySpaceStatus = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
 		if(!isJump && keySpaceStatus){
 			isJump = true;
 			startTimeJump = currTime;
 			tmv = 0;
+			
+		}
+		if(isJump==true){
 			animationCyborgIndex = saltar;
 		}
-	
-
+		
 	glfwPollEvents();
 	return continueApplication;
 }
